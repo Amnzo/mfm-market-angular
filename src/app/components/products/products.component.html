@@ -1,0 +1,72 @@
+<div class="products-container">
+  <div class="page-header">
+    <h2>Gestion des Produits</h2>
+    <a routerLink="/produits/ajouter" class="add-button">
+      <i class="fas fa-plus"></i> Ajouter un produit
+    </a>
+  </div>
+  <div class="search-filter">
+    <input type="text" 
+           placeholder="Recherchez un produit..." 
+           class="search-input"
+           [(ngModel)]="searchQuery"
+           (input)="applyFilters()">
+           
+    <select class="status-filter"
+            [(ngModel)]="statusFilter"
+            (change)="applyFilters()">
+      <option value="">Tous les produits</option>
+      <option value="disponible">En stock</option>
+      <option value="epuise">Stock épuisé</option>
+    </select>
+  </div>
+  
+  
+
+  <div class="products-grid" *ngIf="!loading && !error">
+    <div class="product-card" *ngFor="let product of filteredProducts">
+      <div class="product-image">
+        <img [src]="getFullImageUrl(product.imageurl)" [alt]="product.name">
+      </div>
+      <div class="product-info">
+        <h3>{{ product.name }}</h3>
+        <div class="product-id">Réf: {{ product.id }}</div>
+
+        <div class="price-section">
+          <div class="price-label">
+            <span class="label">Prix détail :</span>
+            <span class="value">{{ product.price | currency:'MAD':'symbol' }}</span>
+          </div>
+          <div class="price-label" *ngIf="product.price2">
+            <span class="label">Prix gros :</span>
+            <span class="value">{{ product.price2 | currency:'MAD':'symbol' }}</span>
+          </div>
+        </div>
+
+        <div class="stock-section">
+          <div class="stock">Stock : {{ product.qtt_stock }}</div>
+          <div class="availability" [ngClass]="{'available': product.qtt_stock > 0, 'unavailable': product.qtt_stock === 0}">
+            {{ product.qtt_stock > 0 ? 'Disponible' : 'Épuisé' }}
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="edit-btn" (click)="editProduct(product)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="delete-btn" (click)="deleteProduct(product)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i> Chargement des produits...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <i class="fas fa-exclamation-circle"></i> {{ error }}
+  </div>
+</div>

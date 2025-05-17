@@ -1,0 +1,12 @@
+{
+  "/admin/*": {
+    "target": "https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "headers": {
+      "Connection": "keep-alive"
+    },
+    "ws": true
+  }
+}

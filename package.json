@@ -1,0 +1,46 @@
+{
+  "name": "mfm-market",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^12.2.17",
+    "@angular/common": "^12.2.17",
+    "@angular/compiler": "^12.2.17",
+    "@angular/core": "^12.2.17",
+    "@angular/forms": "^12.2.17",
+    "@angular/platform-browser": "^12.2.17",
+    "@angular/platform-browser-dynamic": "^12.2.17",
+    "@angular/router": "^12.2.17",
+    "@fortawesome/angular-fontawesome": "^0.10.2",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "classlist.js": "^1.1.20150312",
+    "core-js": "^2.6.12",
+    "rxjs": "^6.6.7",
+    "tslib": "^2.3.0",
+    "web-animations-js": "^2.3.2",
+    "zone.js": "^0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^12.2.18",
+    "@angular/cli": "^12.2.18",
+    "@angular/compiler-cli": "^12.2.17",
+    "@types/jasmine": "~3.6.0",
+    "@types/node": "^12.11.1",
+    "jasmine-core": "~3.6.0",
+    "karma": "~6.3.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.0.3",
+    "karma-jasmine": "^4.0.0",
+    "karma-jasmine-html-reporter": "^1.5.0",
+    "typescript": "~4.3.5"
+  }
+}

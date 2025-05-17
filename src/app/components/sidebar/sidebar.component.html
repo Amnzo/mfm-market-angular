@@ -1,0 +1,32 @@
+<div class="main-container">
+  <nav class="navbar">
+    <div class="menu-btn" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="quick-stats">
+      <div class="stat-card" (click)="navigateTo('/produits')">
+        <i class="fas fa-box"></i>
+        <h3>Produits</h3>
+        <p>Manage your products</p>
+      </div>
+    </div>
+    <div class="logo">
+      <h1>MFM Market</h1>
+    </div>
+  </nav>
+
+  <aside class="sidebar" [ngClass]="{'active': isMenuOpen}">
+    <nav class="sidebar-nav">
+      <div *ngFor="let item of menuItems" class="nav-item" (click)="navigateTo(item.route)">
+        <i [class]="item.icon"></i>
+        <span>{{item.label}}</span>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
