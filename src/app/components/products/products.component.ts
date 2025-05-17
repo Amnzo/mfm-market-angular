@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '../../services/products.service';
 import { Product } from '../../services/products.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -18,7 +19,10 @@ export class ProductsComponent implements OnInit {
   baseUrl = 'https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev';
   uploads = '/uploads';
 
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -69,7 +73,7 @@ export class ProductsComponent implements OnInit {
   }
 
   editProduct(product: Product): void {
-    console.log('Editing product:', product);
+    this.router.navigate(['/produits/edit', product.id]);
   }
 
   deleteProduct(product: Product): void {

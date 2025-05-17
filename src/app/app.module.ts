@@ -6,13 +6,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule } from '@angular/common/http';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import { FormsModule } from '@angular/forms'; // 👈 IMPORTER ICI
+import { FormsModule } from '@angular/forms'; 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProductsComponent } from './components/products/products.component';
 import { AddProductComponent } from './components/products/add-product/add-product.component';
+import { EditProductComponent } from './components/products/edit-product/edit-product.component';
+import { AppRoutingModule } from './app-routing.module';
 
 // Add Font Awesome icons
 library.add(fas);
@@ -23,6 +25,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'produits', component: ProductsComponent },
   { path: 'produits/ajouter', component: AddProductComponent },
+  { path: 'produits/edit/:id', component: EditProductComponent },
   { path: 'commande', component: SidebarComponent },
   { path: 'utilisateurs', component: SidebarComponent },
   { path: 'paiement', component: SidebarComponent }
@@ -35,7 +38,8 @@ const routes: Routes = [
     SidebarComponent,
     HomeComponent,
     ProductsComponent,
-    AddProductComponent
+    AddProductComponent,
+    EditProductComponent
   ],
   imports: [
     BrowserModule,

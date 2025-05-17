@@ -62,6 +62,33 @@ export class ProductsService {
     );
   }
 
+  getProduct(productId: number): Observable<Product> {
+    const headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Content-Type': 'application/json'
+    };
+
+    return this.http.get<Product>(`${this.apiUrl}/${productId}`, { headers }).pipe(
+      map((product) => {
+        return {
+          ...product,
+          price: product.price,
+          price2: product.price2,
+          avalaible: product.avalaible,
+          qtt_stock: product.qtt_stock
+        };
+      }),
+      catchError((error) => {
+        console.error('API Error:', error);
+        const errorMessage = error.error?.message || 
+                           error.statusText || 
+                           'Erreur lors du chargement du produit';
+        throw new Error(errorMessage);
+      })
+    );
+  }
+
   deleteProduct(productId: number): Observable<void> {
     const headers = {
       'Access-Control-Allow-Origin': '*',
@@ -95,6 +122,16 @@ export class ProductsService {
       catchError((error) => {
         console.error('API Error:', error);
         const errorMessage = error.error?.message || error.statusText || 'Erreur lors de l\'ajout du produit';
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
+  updateProduct(productId: number, formData: FormData): Observable<Product> {
+    return this.http.put<Product>(`${this.addProductUrl}/${productId}`, formData).pipe(
+      catchError((error) => {
+        console.error('API Error:', error);
+        const errorMessage = error.error?.message || error.statusText || 'Erreur lors de la mise à jour du produit';
         return throwError(() => new Error(errorMessage));
       })
     );
