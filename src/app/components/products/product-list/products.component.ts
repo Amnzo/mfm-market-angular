@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductsService } from '../../services/products.service';
-import { Product } from '../../services/products.service';
+import { ProductsService, Product } from '../../../services/products.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -73,7 +72,7 @@ export class ProductsComponent implements OnInit {
   }
 
   editProduct(product: Product): void {
-    this.router.navigate(['/produits/edit', product.id]);
+    this.router.navigate(['/produits/edit/' + product.id]);
   }
 
   deleteProduct(product: Product): void {

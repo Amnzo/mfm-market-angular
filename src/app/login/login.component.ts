@@ -27,7 +27,8 @@ export class LoginComponent implements OnInit {
       const username = this.loginForm.get('username')?.value;
       const password = this.loginForm.get('password')?.value;
 
-      if (username === 'salmi' && password === '123') {
+      if (username === 'salmi' && password === '123456') {
+        console.log("************");
         this.router.navigate(['/home']);
       } else {
         console.log('Invalid credentials');

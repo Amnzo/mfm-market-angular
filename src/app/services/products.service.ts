@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { HttpHeaders } from '@angular/common/http';
 
 export interface Product {
   id: number;
@@ -19,6 +20,7 @@ export interface Product {
 export class ProductsService {
   private apiUrl = '/admin/products';
   private addProductUrl = '/admin/add-product';
+  private getproducturl='/admin/get_product';
 
   constructor(private http: HttpClient) {}
 
@@ -61,33 +63,32 @@ export class ProductsService {
       })
     );
   }
+getProduct(productId: number): Observable<Product> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+    // Les en-têtes 'Access-Control-Allow-*' ne sont pas à définir côté client
+  });
 
-  getProduct(productId: number): Observable<Product> {
-    const headers = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Content-Type': 'application/json'
-    };
+  const url = `admin/products/${productId}`;
 
-    return this.http.get<Product>(`${this.apiUrl}/${productId}`, { headers }).pipe(
-      map((product) => {
-        return {
-          ...product,
-          price: product.price,
-          price2: product.price2,
-          avalaible: product.avalaible,
-          qtt_stock: product.qtt_stock
-        };
-      }),
-      catchError((error) => {
-        console.error('API Error:', error);
-        const errorMessage = error.error?.message || 
-                           error.statusText || 
-                           'Erreur lors du chargement du produit';
-        throw new Error(errorMessage);
-      })
-    );
-  }
+  return this.http.get<Product>(url, { headers }).pipe(
+    map((product) => ({
+      ...product,
+      price: product.price,
+      price2: product.price2,
+      avalaible: product.avalaible,
+      qtt_stock: product.qtt_stock
+    })),
+    catchError((error) => {
+      console.error('API Error:', error);
+      const errorMessage =
+        error.error?.message ||
+        error.statusText ||
+        'Erreur lors du chargement du produit';
+      return throwError(() => new Error(errorMessage));
+    })
+  );
+}
 
   deleteProduct(productId: number): Observable<void> {
     const headers = {

@@ -1,0 +1,53 @@
+<div class="home-content">
+  <div class="welcome-section">
+    <h1>Welcome to MFM Market Dashboard</h1>
+    <p class="subtitle">Welcome back, salmi!</p>
+
+    <div class="summary-bar">
+      <div class="summary-item">📦 Produits: <strong>{{ totalProduits }}</strong></div>
+      <div class="summary-item">🛒 Commandes: <strong>{{ totalCommandes }}</strong></div>
+      <div class="summary-item">👥 Utilisateurs: <strong>{{ totalUtilisateurs }}</strong></div>
+      <div class="summary-item">💶 CA: <strong>{{ chiffreAffaire | currency:'EUR' }}</strong></div>
+    </div>
+
+    <div class="quick-stats">
+      <div class="stat-card" (click)="navigateTo('/produits')">
+        <i class="fas fa-box"></i>
+        <h3>Produits</h3>
+        <p>{{ totalProduits }} produits disponibles</p>
+        <p class="trend">+5 nouveaux ce mois</p>
+      </div>
+      <div class="stat-card" (click)="navigateTo('/commande')">
+        <i class="fas fa-shopping-cart"></i>
+        <h3>Commandes</h3>
+        <p>{{ totalCommandes }} commandes passées</p>
+        <p class="trend">+8% ce mois</p>
+      </div>
+      <div class="stat-card" (click)="navigateTo('/utilisateurs')">
+        <i class="fas fa-users"></i>
+        <h3>Utilisateurs</h3>
+        <p>{{ totalUtilisateurs }} utilisateurs actifs</p>
+        <p class="trend">+3 ce mois</p>
+      </div>
+      <div class="stat-card" (click)="navigateTo('/paiement')">
+        <i class="fas fa-credit-card"></i>
+        <h3>Paiements</h3>
+        <p>CA : {{ chiffreAffaire | currency:'EUR':'symbol':'1.0-0' }}</p>
+        <p class="trend">+12% comparé au mois dernier</p>
+      </div>
+    </div>
+
+    <div class="todo-panel">
+      <h2>🔔 À faire</h2>
+      <ul>
+        <li>⚠️ Vérifier les paiements en attente</li>
+        <li>📦 Réapprovisionner stock produit A</li>
+        <li>🧾 Gérer la facture client #2025</li>
+      </ul>
+    </div>
+
+    <div class="quote-box">
+      💡 “Le succès, c’est d’aller d’échec en échec sans perdre son enthousiasme.” – Winston Churchill
+    </div>
+  </div>
+</div>

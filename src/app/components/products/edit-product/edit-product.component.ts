@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
-import { ProductsService, Product } from '../../../services/products.service';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-edit-product',
@@ -9,38 +8,52 @@ import { ProductsService, Product } from '../../../services/products.service';
   styleUrls: ['./edit-product.component.scss']
 })
 export class EditProductComponent implements OnInit {
-  productId: number | null = null;
-  product: Product | null = null;
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    price2: number;
+    available: boolean;
+    qtt_stock: number;
+    imageurl: string;
+  } | null = null;
   imageFileInvalid = false;
   selectedFile: File | null = null;
+  loading = false;
+  error: string | null = null;
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient,
-    private productsService: ProductsService
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.productId = params['id'];
-      if (this.productId) {
-        this.loadProduct();
-      }
-    });
-  }
-
-  loadProduct(): void {
-    if (this.productId !== null) {
-      this.productsService.getProduct(this.productId).subscribe({
-        next: (product) => {
-          this.product = product;
+    const id = this.route.snapshot.params['id'];
+    if (id) {
+      // ⚠️ À adapter avec ton API réelle
+      this.http.get(`admin/get_product/${id}`).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.product = {
+            id: data.id,
+            name: data.name || '',
+            price: data.price || 0,
+            price2: data.price2 || 0,
+            available: data.available || true,
+            qtt_stock: data.qtt_stock || 0,
+            imageurl: data.imageurl || ''
+          };
         },
         error: (err) => {
-          console.error('Erreur lors du chargement du produit:', err);
+          console.error('Erreur lors du chargement du produit', err);
           alert('Erreur lors du chargement du produit');
+          this.router.navigate(['/produits']);
         }
       });
+    } else {
+      alert('Produit non trouvé');
+      this.router.navigate(['/produits']);
     }
   }
 
@@ -57,27 +70,18 @@ export class EditProductComponent implements OnInit {
 
         const reader = new FileReader();
         reader.onload = () => {
-          if (this.product) {
-            this.product.imageurl = reader.result as string;
-          }
+          this.product.imageurl = reader.result as string;
         };
         reader.readAsDataURL(file);
       }
     } else {
       this.imageFileInvalid = false;
       this.selectedFile = null;
-      if (this.product) {
-        this.product.imageurl = '';
-      }
+      this.product.imageurl = '';
     }
   }
 
   update() {
-    if (!this.product) {
-      alert('Produit non trouvé');
-      return;
-    }
-
     if (
       !this.product.name ||
       this.product.price === null ||
@@ -88,27 +92,33 @@ export class EditProductComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
+    this.error = null;
+
     const formData = new FormData();
-    formData.append('name', this.product.name);
-    formData.append('price', this.product.price.toString());
-    formData.append('price2', this.product.price2.toString());
-    formData.append('avalaible', this.product.avalaible ? 'true' : 'false');
-    formData.append('qtt_stock', this.product.qtt_stock.toString());
+    formData.append('name', this.product?.name || '');
+    formData.append('price', this.product?.price ? this.product.price.toString() : '0');
+    formData.append('price2', this.product?.price2 ? this.product.price2.toString() : '0');
+    formData.append('available', (this.product?.available || true).toString());
+    formData.append('qtt_stock', this.product?.qtt_stock ? this.product.qtt_stock.toString() : '0');
 
     if (this.selectedFile) {
       formData.append('image', this.selectedFile, this.selectedFile.name);
     }
 
-    // Utiliser updateProduct au lieu de addProduct
-    this.productsService.updateProduct(this.productId!, formData).subscribe({
+    // ⚠️ À adapter avec ton API réelle
+    this.http.put(`admin/update-product/${this.product.id}`, formData).subscribe({
       next: (response) => {
+        this.loading = false;
         console.log('Produit mis à jour avec succès', response);
         alert('Produit mis à jour avec succès');
         this.router.navigate(['/produits']);
       },
       error: (err) => {
+        this.loading = false;
+        this.error = err.message || 'Erreur lors de la mise à jour du produit';
         console.error('Erreur lors de la mise à jour', err);
-        alert('Erreur lors de la mise à jour du produit');
+        alert(this.error);
       }
     });
   }
