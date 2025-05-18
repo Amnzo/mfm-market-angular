@@ -7,6 +7,8 @@ import { LoginComponent } from './login/login.component';
 import { UsersListComponent } from './components/users/users-list/users-list.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HomeComponent } from './components/home/home.component';
+import { CommandeListComponent } from './components/commandes/commande-list/commande-list.component';
+import { AddUserComponent } from './components/users/add-user/add-user.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -15,9 +17,11 @@ const routes: Routes = [
   { path: 'produits', component: ProductsComponent },
   { path: 'produits/ajouter', component: AddProductComponent },
   { path: 'produits/edit/:id', component: EditProductComponent },
+  { path: 'commande', component: CommandeListComponent },
   { path: 'utilisateurs', component: UsersListComponent },
-  { path: 'utilisateurs/ajouter', component: SidebarComponent },
+  { path: 'utilisateurs/ajouter', component: AddUserComponent },
   { path: 'utilisateurs/:id/editer', component: SidebarComponent },
+  { path: 'paiement', component: SidebarComponent },
   { path: '**', redirectTo: '/login' }
 ];
 

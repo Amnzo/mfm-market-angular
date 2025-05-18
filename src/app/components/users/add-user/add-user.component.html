@@ -1,0 +1,128 @@
+<style>
+  .add-user-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .form-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+
+  .form-group .error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+
+  .submit-btn {
+    background: #1976d2;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background 0.3s;
+  }
+
+  .submit-btn:hover {
+    background: #1557b0;
+  }
+
+  .back-btn {
+    display: block;
+    margin-bottom: 20px;
+    color: #1976d2;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+
+  .back-btn:hover {
+    color: #1557b0;
+  }
+</style>
+
+<div class="add-user-container">
+  <a class="back-btn" routerLink="/utilisateurs">
+    <i class="fas fa-arrow-left"></i> Retour à la liste des utilisateurs
+  </a>
+
+  <div class="form-card">
+    <h2>Ajouter un nouvel utilisateur</h2>
+    
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" formControlName="nom">
+        <div class="error" *ngIf="userForm.get('nom')?.invalid && userForm.get('nom')?.touched">
+          Le nom est requis (minimum 2 caractères)
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email">
+        <div class="error" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+          Veuillez entrer un email valide
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" formControlName="password">
+        <div class="error" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+          Le mot de passe doit contenir au moins 6 caractères
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="user_level">Niveau d'utilisateur</label>
+        <select id="user_level" formControlName="user_level">
+          <option value="">Sélectionnez un niveau</option>
+          <option *ngFor="let level of userLevels" [value]="level">
+            {{ level }}
+          </option>
+        </select>
+        <div class="error" *ngIf="userForm.get('user_level')?.invalid && userForm.get('user_level')?.touched">
+          Veuillez sélectionner un niveau d'utilisateur
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="userForm.invalid">
+        <i class="fas fa-plus-circle"></i> Ajouter l'utilisateur
+      </button>
+    </form>
+  </div>
+</div>

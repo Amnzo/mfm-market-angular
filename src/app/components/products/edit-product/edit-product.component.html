@@ -9,6 +9,20 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+    .back-btn {
+      display: block;
+      margin-bottom: 20px;
+      color: #3498db;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+    .back-btn:hover {
+      color: #2980b9;
+    }
+    .back-btn i {
+      margin-right: 5px;
+    }
 
     .edit-product-container h2 {
       text-align: center;
@@ -150,6 +164,10 @@
     }
   </style>
 
+  <a class="back-btn" routerLink="/produits">
+    <i class="fas fa-arrow-left"></i> Retour à la liste des produits
+  </a>
+  
   <h2>Modifier le produit</h2>
   <form class="product-form">
     <div class="form-group">

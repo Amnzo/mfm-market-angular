@@ -1,3 +1,5 @@
+
+
 <div class="add-product-container">
   <style>
     .add-product-container {
@@ -9,6 +11,20 @@
       background-color: #fafafa;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       font-family: Arial, sans-serif;
+    }
+    .back-btn {
+      display: block;
+      margin-bottom: 20px;
+      color: #007bff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+    .back-btn:hover {
+      color: #0056b3;
+    }
+    .back-btn i {
+      margin-right: 5px;
     }
     .add-product-container h2 {
       text-align: center;
@@ -73,6 +89,10 @@
     }
   </style>
 
+  <a class="back-btn" routerLink="/produits">
+    <i class="fas fa-arrow-left"></i> Retour à la liste des produits
+  </a>
+  
   <h2>Ajouter un produit</h2>
   <form (ngSubmit)="submit()" #productForm="ngForm" class="product-form">
     <div>
