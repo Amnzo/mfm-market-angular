@@ -143,16 +143,16 @@
               <i class="fas fa-eye"></i>
             </button>
             <button 
-            *ngIf="commande.status !== 'livrée'"
-            type="button" 
-            class="btn-details" 
-            data-bs-toggle="modal" 
-            data-bs-target="#detailsModal"
-            (click)="selectedCommande = commande"
-            title="Attribuer un livreur"
-          >
-            <i class="fas fa-truck"></i>
-          </button>
+            *ngIf="!commande.delivery_name"
+              type="button" 
+              class="btn-details" 
+              data-bs-toggle="modal" 
+              data-bs-target="#assignDeliveryModal"
+              (click)="selectedCommande = commande"
+              title="Attribuer un livreur"
+            >
+              <i class="fas fa-truck"></i>
+            </button>
           
           </div>
         </div>
@@ -272,6 +272,36 @@
   </div>
   
   
+
+  <!-- Modal pour assigner un livreur -->
+  <div class="modal fade" id="assignDeliveryModal" tabindex="-1" aria-labelledby="assignDeliveryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="assignDeliveryModalLabel">Assigner un livreur</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <p>Commande #{{ selectedCommande?.id }} - {{ selectedCommande?.client_name }}</p>
+          <div class="mb-3">
+            <label for="deliveryUser" class="form-label">Choisir un livreur</label>
+            <select class="form-select" id="deliveryUser" [(ngModel)]="selectedDeliveryUser">
+              <option value="">Sélectionner un livreur</option>
+              <option *ngFor="let user of deliveryUsers" [value]="user.id">
+                {{ user.nom }} ({{ user.email }})
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="assignDelivery()" [disabled]="!selectedDeliveryUser">
+            Assigner
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal Bootstrap pour l'adresse complète -->
   <div class="modal fade" id="adresseModal" tabindex="-1" aria-labelledby="adresseModalLabel" aria-hidden="true">

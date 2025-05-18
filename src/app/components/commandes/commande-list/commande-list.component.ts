@@ -42,20 +42,59 @@ interface Commande {
 export class CommandeListComponent implements OnInit {
   commandes: Commande[] = [];
   searchTerm = '';
-  statusFilter = '';
-  dateFilter = '';
+  statusFilter: string | null = null;
+  dateFilter: string | null = null;
   currentPage = 1;
   itemsPerPage = 10;
-  selectedCommande: any = null;
-  adresseComplete: string = '';
+  selectedCommande: Commande | null = null;
+  selectedDeliveryUser: number | null = null;
+  deliveryUsers: any[] = [];
+  adresseComplete = '';
+  statusColors = {
+    'en attente': 'warning',
+    'en cours': 'info',
+    'terminée': 'success',
+    'annulée': 'danger',
+    'livrée': 'success'
+  };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.loadDeliveryUsers();
+  }
 
   ngOnInit(): void {
     this.loadCommandes();
   }
 
+  loadDeliveryUsers() {
+    this.http.get<any[]>('/admin/users')
+      .subscribe(response => {
+        console.log(response);
+        this.deliveryUsers = response.filter(user => user.user_level === 'livreur'); // Filtrer par level = 1 pour les livreurs
+      });
+  }
 
+  assignDelivery() {
+    if (this.selectedCommande && this.selectedDeliveryUser) {
+      const deliveryData = {
+        order_id: this.selectedCommande.id,
+        delivery_id: this.selectedDeliveryUser
+      };
+
+      this.http.post('/admin/assign-delivery', deliveryData)
+        .subscribe(response => {
+          // Mettre à jour le statut de la commande
+          const modal = document.getElementById('assignDeliveryModal');
+          if (modal) {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+          }
+          this.selectedCommande = null;
+          this.selectedDeliveryUser = null;
+          this.loadCommandes();
+        });
+    }
+  }
 
   loadCommandes(): void {
     this.http.get<{ orders: Commande[] }>('/admin/orders')
