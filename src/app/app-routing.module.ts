@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'commande', component: CommandeListComponent },
   { path: 'utilisateurs', component: UsersListComponent },
   { path: 'utilisateurs/ajouter', component: AddUserComponent },
-  { path: 'utilisateurs/:id/editer', component: SidebarComponent },
+
   { path: 'paiement', component: SidebarComponent },
   { path: '**', redirectTo: '/login' }
 ];
