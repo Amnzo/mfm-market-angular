@@ -1,0 +1,98 @@
+<style>
+    .menu-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+    }
+  
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+  
+    .burger-menu {
+      display: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+  
+    .burger-menu span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: #333;
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+  
+    .menu-items {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .menu-items li {
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+  
+    .menu-items li:hover {
+      background: #f0f0f0;
+    }
+  
+    .menu-items i {
+      margin-right: 8px;
+    }
+  
+    @media (max-width: 768px) {
+      .menu-items {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        padding: 10px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+  
+      .menu-items li {
+        width: 100%;
+        text-align: left;
+        padding: 12px 20px;
+      }
+  
+      .burger-menu {
+        display: block;
+      }
+  
+      .menu-items.show-menu {
+        display: flex;
+      }
+    }
+  </style>
+  
+  <div class="menu-container">
+    <div class="logo">MFM Market</div>
+    <div class="burger-menu" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <ul class="menu-items" [class.show-menu]="showMenu">
+      <li *ngFor="let item of menuItems" (click)="navigateTo(item.route)">
+        <i class="fas {{item.icon}}"></i>
+        {{item.label}}
+      </li>
+    </ul>
+  </div>

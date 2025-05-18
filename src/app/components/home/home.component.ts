@@ -1,30 +1,23 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
-  menuItems = [
-    { route: '/produits', icon: 'fa-box', label: 'Produits' },
-    { route: '/commande', icon: 'fa-shopping-cart', label: 'Commandes' },
-    { route: '/utilisateurs', icon: 'fa-users', label: 'Utilisateurs' },
-    { route: '/paiement', icon: 'fa-credit-card', label: 'Paiements' }
-  ];
+export class HomeComponent implements OnInit {
+  stats = {
+    totalProducts: 120,
+    totalOrders: 45,
+    totalPayments: 23450,
+    totalUsers: 10,
+    commandesEnCours: 5,
+    bestSeller: 'Ali Bennani',
+    lowStockProducts: 8,
+    totalCredit: 4560,
+    todayOrders: 4
+  };
 
-  showMenu = false;
+  constructor() {}
 
-  constructor(private router: Router) {}
-
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
-    this.showMenu = false;
-  }
-
-  toggleMenu(): void {
-    this.showMenu = !this.showMenu;
-  }
-
+  ngOnInit(): void {}
 }

@@ -15,6 +15,7 @@ import { EditProductComponent } from './components/products/edit-product/edit-pr
 import { UsersListComponent } from './components/users/users-list/users-list.component';
 import { CommandeListComponent } from './components/commandes/commande-list/commande-list.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
+import { MenuComponent } from './components/menu/menu/menu.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { AddUserComponent } from './components/users/add-user/add-user.component
     EditProductComponent,
     UsersListComponent,
     CommandeListComponent,
-    AddUserComponent
+    AddUserComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
