@@ -66,7 +66,10 @@
 .info-block,
 .products-block,
 .payments-block {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
 }
 
 .products-block ul,
@@ -84,35 +87,93 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
+.modal-header {
+  background-color: #0d6efd;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 1rem 1rem 0 0 !important;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
 .table thead th {
   background-color: #f8f9fa;
   font-weight: 600;
+  color: #495057;
 }
 
+.table td {
+  vertical-align: middle;
+}
+
+/* Paiements styles */
+.paiements-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.paiement-date {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.paiement-amount {
+  font-weight: 600;
+  color: #212529;
+}
+
+.paiement-method {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Statut styles */
 .card-status {
-  padding: 4px 10px;
-  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
   font-weight: bold;
   display: inline-block;
   color: #fff;
+  font-size: 0.9rem;
+  min-width: 120px;
+  text-align: center;
 }
 
 .status-livrée {
-  background-color: #198754; /* Vert Bootstrap */
+  background-color: #198754;
+  color: white;
 }
 
 .status-en-cours {
-  background-color: #ffc107; /* Jaune Bootstrap */
+  background-color: #ffc107;
   color: #000;
 }
 
 .status-annulée {
-  background-color: #dc3545; /* Rouge Bootstrap */
+  background-color: #dc3545;
+  color: white;
 }
 
+/* Footer styles */
+.modal-footer {
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
 
-
-
+.btn-close-white {
+  filter: brightness(0) invert(1);
+}
 
 </style>
 <div class="container">
@@ -217,7 +278,15 @@
             <p><strong><i class="fas fa-map-marker-alt me-1"></i>Adresse :</strong> {{ selectedCommande?.client_adresse }}</p>
             <p><strong><i class="fas fa-calendar-alt me-1"></i>Date :</strong> {{ selectedCommande?.created_at | date:'medium' }}</p>
             <p><strong><i class="fas fa-coins me-1"></i>Total :</strong> {{ selectedCommande?.total | number:'1.2-2' }} DH</p>
-            <p><strong><i class="fas fa-credit-card me-1"></i>Crédit :</strong> {{ selectedCommande?.credit_sur_commande | number:'1.2-2' }} DH</p>
+            <div class="alert alert-warning p-2 mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <div>
+                  <strong>Crédit à suivre :</strong> 
+                  <span class="credit-attention">{{ selectedCommande?.credit_sur_commande | number:'1.2-2' }} DH</span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="col-md-6">
             <p><strong><i class="fas fa-info-circle me-1"></i>Statut :</strong>
@@ -264,7 +333,7 @@
         </div>
 
         <!-- Paiements -->
-        <div>
+        <div class="paiements-section">
           <h5 class="text-primary border-bottom pb-2 mb-3">
             <i class="fas fa-money-bill-wave me-2"></i>Paiements
           </h5>
@@ -280,16 +349,28 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let paiement of selectedCommande?.paiements">
-                    <td>{{ paiement.date | date:'medium' }}</td>
-                    <td class="text-end">{{ paiement.amount | number:'1.2-2' }} DH</td>
-                    <td>{{ paiement.method }}</td>
+                    <td class="paiement-date">
+                      <i class="fas fa-calendar-alt me-1"></i>
+                      {{ paiement.date_paiement | date:'medium' }}
+                    </td>
+                    <td class="text-end paiement-amount">
+                      <i class="fas fa-money-bill-wave me-1"></i>
+                      {{ paiement.montant | number:'1.2-2' }} DH
+                    </td>
+                    <td class="paiement-method">
+                      <i class="fas fa-credit-card me-1"></i>
+                      {{ paiement.mode_paiement }}
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
           <ng-template #noPayments>
-            <p class="text-muted fst-italic">Aucun paiement enregistré.</p>
+            <div class="text-center py-4">
+              <i class="fas fa-wallet fa-3x text-muted mb-3"></i>
+              <p class="text-muted fst-italic mb-0">Aucun paiement enregistré.</p>
+            </div>
           </ng-template>
         </div>
       </div>
