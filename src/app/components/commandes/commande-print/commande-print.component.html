@@ -1,0 +1,65 @@
+<div class="print-container" *ngIf="commande">
+  <div class="header">
+    <h1>Facture de Commande</h1>
+    <p>N° {{ commande.id }}</p>
+  </div>
+
+  <div class="client-info">
+    <h3>Informations Client</h3>
+    <p><strong>Nom :</strong> {{ commande.client_name }}</p>
+    <p><strong>Téléphone :</strong> {{ commande.client_mobile }}</p>
+    <p><strong>Adresse :</strong> {{ commande.client_adresse }}</p>
+  </div>
+
+  <div class="order-info">
+    <h3>Détails de la Commande</h3>
+    <p><strong>Date :</strong> {{ commande.created_at | date:'mediumDate' }}</p>
+    <p><strong>Statut :</strong> {{ commande.status }}</p>
+    <p *ngIf="commande.creator_name"><strong>Créé par :</strong> {{ commande.creator_name }}</p>
+    <p *ngIf="commande.delivery_name"><strong>Livré par :</strong> {{ commande.delivery_name }}</p>
+  </div>
+
+  <div class="items">
+    <h3>Produits</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Quantité</th>
+          <th>Prix Unitaire</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of commande.items">
+          <td>{{ item.nom }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.prix | number:'1.2-2' }}</td>
+          <td>{{ item.total_ligne | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="payments" *ngIf="commande.paiements?.length > 0">
+    <h3>Paiements</h3>
+    <ul class="list-group">
+      <li *ngFor="let paiement of commande.paiements" class="list-group-item">
+        <span>{{ paiement.montant | number:'1.2-2' }} DH - {{ paiement.mode_paiement }}</span>
+        <small class="text-muted">{{ paiement.date_paiement | date:'mediumDate' }}</small>
+      </li>
+    </ul>
+  </div>
+
+  <div class="total">
+    <h3>Total</h3>
+    <p class="total-amount">{{ commande.total | number:'1.2-2' }} DH</p>
+    <p *ngIf="commande.credit_sur_commande" class="credit-amount">
+      Crédit : {{ commande.credit_sur_commande | number:'1.2-2' }} DH
+    </p>
+  </div>
+
+  <div class="print-button">
+    <button class="btn btn-primary" (click)="print()">Imprimer</button>
+  </div>
+</div>

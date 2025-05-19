@@ -13,7 +13,7 @@ export class MenuComponent {
     { route: '/produits', icon: 'fa-box', label: 'Produits' },
     { route: '/commande', icon: 'fa-shopping-cart', label: 'Commandes' },
     { route: '/utilisateurs', icon: 'fa-users', label: 'Utilisateurs' },
-    { route: '/paiement', icon: 'fa-credit-card', label: 'Paiements' }
+
   ];
 
   showMenu = false;

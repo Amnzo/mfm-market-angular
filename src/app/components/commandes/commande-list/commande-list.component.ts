@@ -18,6 +18,8 @@ interface CommandeItem {
   product_name: string;
 }
 
+
+
 interface Commande {
   id: number;
   client_name: string;
@@ -35,19 +37,21 @@ interface Commande {
   paiements: Paiement[];
 }
 
+
+
 @Component({
   selector: 'app-commande-list',
   templateUrl: './commande-list.component.html'
 })
 export class CommandeListComponent implements OnInit {
   commandes: Commande[] = [];
-  searchTerm = '';
-  statusFilter: string | null = null;
-  dateFilter: string | null = null;
+  searchTerm: string = '';
+  statusFilter: string = '';
+  dateFilter: string = '';
   currentPage = 1;
   itemsPerPage = 10;
   selectedCommande: Commande | null = null;
-  selectedDeliveryUser: number | null = null;
+  selectedDeliveryUser: string | null = null;
   deliveryUsers: any[] = [];
   adresseComplete = '';
   statusColors = {
@@ -67,7 +71,7 @@ export class CommandeListComponent implements OnInit {
   }
 
   loadDeliveryUsers() {
-    this.http.get<any[]>('/admin/users')
+    this.http.get<any[]>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/users')
       .subscribe(response => {
         console.log(response);
         this.deliveryUsers = response.filter(user => user.user_level === 'livreur'); // Filtrer par level = 1 pour les livreurs
@@ -81,7 +85,7 @@ export class CommandeListComponent implements OnInit {
         delivery_id: this.selectedDeliveryUser
       };
 
-      this.http.post('/admin/assign-delivery', deliveryData)
+      this.http.post('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/assign-delivery', deliveryData)
         .subscribe(response => {
           // Mettre à jour le statut de la commande
           const modal = document.getElementById('assignDeliveryModal');
@@ -97,41 +101,18 @@ export class CommandeListComponent implements OnInit {
   }
 
   loadCommandes(): void {
-    this.http.get<{ orders: Commande[] }>('/admin/orders')
+    this.http.get<{ orders: Commande[] }>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/orders')
       .subscribe(response => {
         this.commandes = response.orders;
       });
   }
 
-  get filteredCommandes(): Commande[] {
-    let filtered = [...this.commandes];
 
-    // Filtrer par recherche
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(cmd => 
-        cmd.id.toString().includes(term) ||
-        cmd.client_name.toLowerCase().includes(term)
-      );
-    }
 
-    // Filtrer par statut
-    if (this.statusFilter) {
-      filtered = filtered.filter(cmd => cmd.status === this.statusFilter);
-    }
-
-    // Filtrer par date
-    if (this.dateFilter) {
-      const filterDate = new Date(this.dateFilter);
-      filtered = filtered.filter(cmd => {
-        const cmdDate = new Date(cmd.created_at);
-        return cmdDate.toDateString() === filterDate.toDateString();
-      });
-    }
-
-    // Pagination
+  // Pagination
+  get paginatedCommandes(): Commande[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return filtered.slice(start, start + this.itemsPerPage);
+    return this.commandes.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
@@ -152,6 +133,100 @@ export class CommandeListComponent implements OnInit {
     };
     return statusMap[status.toLowerCase()] || 'default';
   }
+
+  imprimerCommande(commande: any) {
+    let itemsHTML = '';
+    commande.items.forEach(item => {
+      itemsHTML += `
+        <tr>
+          <td>${item.product_name}</td>
+          <td>${item.quantity}</td>
+          <td>${item.price} MAD</td>
+          <td>${item.remise} %</td>
+          <td>${item.total_ligne} MAD</td>
+        </tr>
+      `;
+    });
+  
+    let paiementsHTML = '';
+    commande.paiements.forEach(paiement => {
+      paiementsHTML += `
+        <tr>
+          <td>${new Date(paiement.date_paiement).toLocaleDateString()}</td>
+          <td>${paiement.montant} MAD</td>
+          <td>${paiement.mode_paiement}</td>
+        </tr>
+      `;
+    });
+  
+    const printContent = `
+      <html>
+      <head>
+        <title>Impression commande #${commande.id}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+          body { padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+          h2, h3 { text-align: center; margin-bottom: 20px; }
+          .table thead th { background-color: #0d6efd; color: white; }
+          .info-section p { font-size: 1rem; margin: 0.3rem 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2 class="mb-4">Détails de la commande #${commande.id}</h2>
+  
+          <div class="info-section mb-4">
+            <p><strong>Client :</strong> ${commande.client_name}</p>
+            <p><strong>Adresse :</strong> ${commande.client_address}</p>
+            <p><strong>Mobile :</strong> ${commande.client_phone}</p>
+            <p><strong>Status :</strong> <span class="badge bg-success">${commande.status}</span></p>
+            <p><strong>Date création :</strong> ${new Date(commande.created_at).toLocaleString()}</p>
+            <p><strong>Total :</strong> <span class="fw-bold">${commande.total} MAD</span></p>
+          </div>
+  
+          <h3>Produits</h3>
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Remise (%)</th>
+                <th>Total ligne</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHTML}
+            </tbody>
+          </table>
+  
+          <h3>Paiements</h3>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Mode de paiement</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${paiementsHTML}
+            </tbody>
+          </table>
+        </div>
+      </body>
+      </html>
+    `;
+  
+    const newWindow = window.open('', '_blank', 'width=900,height=700');
+    if (newWindow) {
+      newWindow.document.write(printContent);
+      newWindow.document.close();
+      newWindow.focus();
+      newWindow.print();
+    }
+  }
+  
 
 
   
