@@ -45,22 +45,18 @@ interface Commande {
 })
 export class CommandeListComponent implements OnInit {
   commandes: Commande[] = [];
+  filteredCommandes: Commande[] = [];
   searchTerm: string = '';
   statusFilter: string = '';
   dateFilter: string = '';
+  creditFilter: boolean = false;
   currentPage = 1;
   itemsPerPage = 10;
   selectedCommande: Commande | null = null;
   selectedDeliveryUser: string | null = null;
   deliveryUsers: any[] = [];
   adresseComplete = '';
-  statusColors = {
-    'en attente': 'warning',
-    'en cours': 'info',
-    'terminée': 'success',
-    'annulée': 'danger',
-    'livrée': 'success'
-  };
+
 
   constructor(private http: HttpClient) {
     this.loadDeliveryUsers();
@@ -68,6 +64,50 @@ export class CommandeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCommandes();
+  }
+
+  loadCommandes(): void {
+    this.http.get<{ orders: Commande[] }>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/orders')
+      .subscribe(response => {
+        this.commandes = response.orders;
+        this.filteredCommandes = [...this.commandes];
+      });
+  }
+
+  applyFilters(): void {
+    let filtered = [...this.commandes];
+
+    // Filtrer par statut
+    if (this.statusFilter) {
+      filtered = filtered.filter(commande => 
+        commande.status.toLowerCase() === this.statusFilter.toLowerCase()
+      );
+    }
+
+    // Filtrer par date
+    if (this.dateFilter) {
+      filtered = filtered.filter(commande => {
+        const commandeDate = new Date(commande.created_at);
+        const filterDate = new Date(this.dateFilter);
+        return commandeDate.toDateString() === filterDate.toDateString();
+      });
+    }
+
+    // Filtrer par crédit
+    if (this.creditFilter) {
+      filtered = filtered.filter(commande => 
+        commande.credit_sur_commande !== null && commande.credit_sur_commande !== ''
+      );
+    }
+
+    // Filtrer par nom de client
+    if (this.searchTerm) {
+      filtered = filtered.filter(commande => 
+        commande.client_name.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    this.filteredCommandes = filtered;
   }
 
   loadDeliveryUsers() {
@@ -93,26 +133,15 @@ export class CommandeListComponent implements OnInit {
             modal.classList.remove('show');
             modal.style.display = 'none';
           }
-          this.selectedCommande = null;
-          this.selectedDeliveryUser = null;
-          this.loadCommandes();
+          window.location.reload();
         });
     }
   }
 
-  loadCommandes(): void {
-    this.http.get<{ orders: Commande[] }>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/orders')
-      .subscribe(response => {
-        this.commandes = response.orders;
-      });
-  }
-
-
-
   // Pagination
   get paginatedCommandes(): Commande[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.commandes.slice(start, start + this.itemsPerPage);
+    return this.filteredCommandes.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
@@ -123,16 +152,6 @@ export class CommandeListComponent implements OnInit {
     return new Date(date).toLocaleString();
   }
 
-  getStatusColor(status: string): string {
-    const statusMap = {
-      'en attente': 'warning',
-      'en cours': 'info',
-      'terminée': 'success',
-      'annulée': 'danger',
-      'livrée': 'success'
-    };
-    return statusMap[status.toLowerCase()] || 'default';
-  }
 
   imprimerCommande(commande: any) {
     let itemsHTML = '';
@@ -177,8 +196,8 @@ export class CommandeListComponent implements OnInit {
   
           <div class="info-section mb-4">
             <p><strong>Client :</strong> ${commande.client_name}</p>
-            <p><strong>Adresse :</strong> ${commande.client_address}</p>
-            <p><strong>Mobile :</strong> ${commande.client_phone}</p>
+            <p><strong>Adresse :</strong> ${commande.client_adresse}</p>
+            <p><strong>Mobile :</strong> ${commande.client_mobile}</p>
             <p><strong>Status :</strong> <span class="badge bg-success">${commande.status}</span></p>
             <p><strong>Date création :</strong> ${new Date(commande.created_at).toLocaleString()}</p>
             <p><strong>Total :</strong> <span class="fw-bold">${commande.total} MAD</span></p>

@@ -33,12 +33,12 @@
       
       <div class="product-info">
         <h3>{{product.name}}</h3>
-        <p class="product-price">{{product.price | number:'1.2-2'}} DZD</p>
+        <p class="product-price">{{product.price | number:'1.2-2'}} </p>
         <p class="product-stock" [class.out-of-stock]="product.qtt_stock === 0">
           Stock: {{product.qtt_stock}}
         </p>
         <p class="product-availability">
-          <span [class.available]="product.available">{{product.available ? 'Disponible' : 'Non disponible'}}</span>
+          <span [class.available]="product.avalaible">{{product.avalaible ? 'Disponible' : 'Non disponible'}}</span>
         </p>
       </div>
 

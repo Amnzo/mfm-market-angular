@@ -21,11 +21,11 @@
 }
 
 /* Couleurs selon le statut */
-.status-en-attente { background-color: #ffc107; }  /* jaune */
-.status-en-cours { background-color: #0dcaf0; }   /* bleu clair */
-.status-terminée { background-color: #198754; }   /* vert */
-.status-annulée { background-color: #dc3545; }    /* rouge */
+.status-en-attente { background-color: #8c888b; }  /* jaune */
+.status-en-cours { background-color: #f00dd2; }   /* bleu clair */
 .status-livrée { background-color: #198754; }     /* vert */
+.status-annulée { background-color: #dc3545; }    /* rouge */
+
 
 /* Bouton détails */
 .btn-details {
@@ -178,13 +178,52 @@
 </style>
 <div class="container">
   <app-menu></app-menu>
-  <h2 class="text-center mb-4">Liste des Commandes</h2>
+  <div class="container-fluid bg-light rounded-3 p-4 mb-4">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="mb-3">Liste des Commandes</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="input-group mb-3">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="fas fa-search"></i>
+          </span>
+          <input type="text" class="form-control border-start-0" placeholder="Rechercher par nom de client..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <select class="form-select form-select-sm" [(ngModel)]="statusFilter" (change)="applyFilters()">
+          <option value="">Tous les statuts</option>
+          <option value="en attente">En attente</option>
+          <option value="en cours">En cours</option>
+          <option value="livrée">Livrée</option>
+          <option value="annulée">Annulée</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <input type="date" class="form-control form-control-sm" [(ngModel)]="dateFilter" (change)="applyFilters()">
+      </div>
+      <div class="col-12 col-md-2">
+        <button class="btn btn-outline-primary btn-sm" (click)="creditFilter = !creditFilter; applyFilters()">
+          <i class="fas fa-credit-card"></i>
+          <span *ngIf="!creditFilter">Avec crédit</span>
+          <span *ngIf="creditFilter">Tous</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Liste commandes -->
 
 
 
   <!-- Liste commandes -->
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <div class="col" *ngFor="let commande of commandes">
+    <div class="col" *ngFor="let commande of filteredCommandes">
       <div class="card h-100 border-primary shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
           <h5 class="card-title mb-0">Commande #{{ commande.id }}</h5>
@@ -195,6 +234,7 @@
             >
               {{ commande.status }}
             </span>
+            <i *ngIf="commande.credit_sur_commande" class="fas fa-exclamation-triangle text-warning" title="Commande avec crédit"></i>
             <button 
               type="button" 
               class="btn-details" 
@@ -278,7 +318,7 @@
             <p><strong><i class="fas fa-map-marker-alt me-1"></i>Adresse :</strong> {{ selectedCommande?.client_adresse }}</p>
             <p><strong><i class="fas fa-calendar-alt me-1"></i>Date :</strong> {{ selectedCommande?.created_at | date:'medium' }}</p>
             <p><strong><i class="fas fa-coins me-1"></i>Total :</strong> {{ selectedCommande?.total | number:'1.2-2' }} DH</p>
-            <div class="alert alert-warning p-2 mb-3">
+            <div *ngIf="selectedCommande?.credit_sur_commande" class="alert alert-warning p-2 mb-3">
               <div class="d-flex align-items-center">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 <div>

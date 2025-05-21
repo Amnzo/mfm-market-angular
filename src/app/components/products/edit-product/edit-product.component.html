@@ -211,11 +211,12 @@
 
     <div class="form-group">
       <label for="available">Disponible :</label>
-      <select id="available" name="available" [ngModel]="product && product.available" (ngModelChange)="product && (product.available = $event)" required>
+      <select id="available" name="available" [(ngModel)]="product.available" required>
         <option [ngValue]="true">Oui</option>
         <option [ngValue]="false">Non</option>
       </select>
     </div>
+    
 
     <div class="form-group">
       <label for="qtt_stock">Quantité en stock :</label>

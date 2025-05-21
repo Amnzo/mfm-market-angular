@@ -40,7 +40,7 @@ export class EditProductComponent implements OnInit {
             name: data.name || '',
             price: data.price || 0,
             price2: data.price2 || 0,
-            available: data.available || true,
+            available: data.avalaible,
             qtt_stock: data.qtt_stock || 0,
             imageurl: data.imageurl || ''
           };
@@ -82,6 +82,8 @@ export class EditProductComponent implements OnInit {
   }
 
   update() {
+    console.log("voici les nouvvel valeur de produit****");
+    console.log(this.product);
     if (
       !this.product.name ||
       this.product.price === null ||
@@ -99,7 +101,7 @@ export class EditProductComponent implements OnInit {
     formData.append('name', this.product?.name || '');
     formData.append('price', this.product?.price ? this.product.price.toString() : '0');
     formData.append('price2', this.product?.price2 ? this.product.price2.toString() : '0');
-    formData.append('available', (this.product?.available || true).toString());
+    formData.append('available', (this.product?.available).toString());
     formData.append('qtt_stock', this.product?.qtt_stock ? this.product.qtt_stock.toString() : '0');
 
     if (this.selectedFile) {
