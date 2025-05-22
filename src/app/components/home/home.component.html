@@ -1,170 +1,59 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tableau de bord - Statistiques</title>
-
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- FontAwesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .card-title i {
-      color: #0d6efd; /* Bootstrap primary blue */
-    }
-  </style>
-</head>
-<body>
-
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4" *ngIf="stats?.stats && stats?.vendeurs">
   <app-menu></app-menu>
   <h2 class="mb-4">Tableau de bord</h2>
 
-  <!-- Section principale (exemple résumé rapide) -->
   <div class="row g-4 mb-4">
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div class="card text-white bg-primary shadow h-100">
         <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-box"></i> Produits</h5>
-          <p class="fs-3">120</p>
+          <h5 class="card-title"><i class="fas fa-credit-card"></i> Crédit total</h5>
+          <p class="fs-3">{{ stats.stats.total_credit | number:'1.2-2' }} MAD</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+
+    <div class="col-md-4">
       <div class="card text-white bg-success shadow h-100">
         <div class="card-body">
           <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Commandes</h5>
-          <p class="fs-3">45</p>
+          <p class="fs-3">{{ stats.stats.nombre_commandes }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+
+    <div class="col-md-4">
       <div class="card text-white bg-warning shadow h-100">
         <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-credit-card"></i> Paiements</h5>
-          <p class="fs-3">23,450 MAD</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-info shadow h-100">
-        <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-users"></i> Utilisateurs</h5>
-          <p class="fs-3">10</p>
+          <h5 class="card-title"><i class="fas fa-chart-line"></i> Chiffre d'affaires</h5>
+          <p class="fs-3">{{ stats.stats.chiffre | number:'1.2-2' }} MAD</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Autres statistiques -->
-  <div class="row g-4 mb-5">
-    <div class="col-md-3">
-      <div class="card text-white bg-secondary shadow h-100">
-        <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-spinner"></i> Commandes en cours</h5>
-          <p class="fs-4">5</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-dark shadow h-100">
-        <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-user-tie"></i> Meilleur vendeur</h5>
-          <p class="fs-5">Ali Bennani</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-danger shadow h-100">
-        <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-boxes"></i> Stock faible</h5>
-          <p class="fs-4">8 produits</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-light text-dark shadow h-100">
-        <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-calendar-day"></i> Commandes aujourd'hui</h5>
-          <p class="fs-4">4</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <h4 class="mt-5 mb-3"><i class="fas fa-user-tie me-2"></i> Statistiques des vendeurs</h4>
 
-  <!-- Top 5 produits et vendeurs -->
   <div class="row g-4">
-    <div class="col-md-6">
-      <div class="card shadow">
+    <div class="col-md-4" *ngFor="let vendeur of stats.vendeurs">
+      <div class="card shadow h-100">
         <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-box-open me-2"></i> Top 5 produits vendus</h5>
+          <h5 class="card-title"><i class="fas fa-user me-2 text-success"></i> {{ vendeur.name }}</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-cubes text-primary me-2"></i> Produit A</span>
-              <span>150 ventes</span>
+            <li class="list-group-item d-flex justify-content-between">
+              <span><i class="fas fa-calendar-day text-primary me-2"></i> Ce mois</span>
+              <span>{{ vendeur.chiffre_mois_courant | number:'1.2-2' }} MAD</span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-cubes text-primary me-2"></i> Produit B</span>
-              <span>120 ventes</span>
+            <li class="list-group-item d-flex justify-content-between">
+              <span><i class="fas fa-calendar-minus text-warning me-2"></i> Mois précédent</span>
+              <span>{{ vendeur.chiffre_mois_precedent | number:'1.2-2' }} MAD</span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-cubes text-primary me-2"></i> Produit C</span>
-              <span>98 ventes</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-cubes text-primary me-2"></i> Produit D</span>
-              <span>75 ventes</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-cubes text-primary me-2"></i> Produit E</span>
-              <span>60 ventes</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-user-tie me-2"></i> Top 5 vendeurs</h5>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-user text-success me-2"></i> Ali</span>
-              <span>40 ventes</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-user text-success me-2"></i> Youssef</span>
-              <span>32 ventes</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-user text-success me-2"></i> Khalid</span>
-              <span>28 ventes</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-user text-success me-2"></i> Malika</span>
-              <span>20 ventes</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-user text-success me-2"></i> Salma</span>
-              <span>15 ventes</span>
+            <li class="list-group-item d-flex justify-content-between">
+              <span><i class="fas fa-calendar-alt text-info me-2"></i> Année</span>
+              <span>{{ vendeur.chiffre_annuel | number:'1.2-2' }} MAD</span>
             </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-
 </div>
-
-<!-- Bootstrap JS Bundle (Popper + Bootstrap JS) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
