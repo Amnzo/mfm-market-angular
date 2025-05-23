@@ -68,6 +68,10 @@
               <span><i class="fas fa-credit-card text-danger me-2"></i> Crédits sur commandes</span>
               <span class="fw-bold">{{ vendeur.total_credits || 0 | number:'1.2-2' }} MAD</span>
             </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span><i class="fas fa-credit-card text-danger me-2"></i> Crédits</span>
+              <span class="fw-bold">{{ vendeur.total_credits || 0 | number:'1.2-2' }} MAD</span>
+            </li>
           </ul>
         </div>
       </div>

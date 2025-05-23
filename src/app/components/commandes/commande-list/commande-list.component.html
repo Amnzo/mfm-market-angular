@@ -1,4 +1,15 @@
 <style>
+  .btn-details {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.btn-details i {
+  font-size: 1.2rem;
+}
+
   /* Carte */
 .card {
   border-radius: 8px;
@@ -221,83 +232,129 @@
 
 
 
-  <!-- Liste commandes -->
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <div class="col" *ngFor="let commande of filteredCommandes">
-      <div class="card h-100 border-primary shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <h5 class="card-title mb-0">Commande #{{ commande.id }}</h5>
-          <div class="d-flex align-items-center gap-2">
-            <span
-              class="card-status"
-              [ngClass]="'status-' + commande.status.replace(' ', '-')"
-            >
-              {{ commande.status }}
-            </span>
-            <i *ngIf="commande.credit_sur_commande" class="fas fa-exclamation-triangle text-warning" title="Commande avec crédit"></i>
-            <button 
-              type="button" 
-              class="btn-details" 
-              data-bs-toggle="modal" 
-              data-bs-target="#detailsModal"
-              (click)="selectedCommande = commande"
-              title="Voir détails"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-            <button 
-              *ngIf="!commande.delivery_name"
-              type="button" 
-              class="btn-details" 
-              data-bs-toggle="modal" 
-              data-bs-target="#assignDeliveryModal"
-              (click)="selectedCommande = commande"
-              title="Attribuer un livreur"
-            >
-              <i class="fas fa-truck"></i>
-            </button>
+<!-- Liste commandes -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <div class="col" *ngFor="let commande of filteredCommandes">
+    <div class="card h-100 border-primary shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Commande #{{ commande.id }}</h5>
+        <div class="d-flex align-items-center gap-2">
+          <span
+            class="card-status"
+            [ngClass]="'status-' + commande.status.replace(' ', '-')"
+          >
+            {{ commande.status }}
+          </span>
+
+          <i *ngIf="commande.credit_sur_commande" class="fas fa-exclamation-triangle text-warning" title="Commande avec crédit"></i>
+
+          <button 
+            type="button" 
+            class="btn-details" 
+            data-bs-toggle="modal" 
+            data-bs-target="#detailsModal"
+            (click)="selectedCommande = commande"
+            title="Voir détails"
+          >
+            <i class="fas fa-eye"></i>
+          </button>
+
+          <button 
+            *ngIf="!commande.delivery_name && commande.status.toLowerCase() !== 'annulée'"
+            type="button" 
+            class="btn-details" 
+            data-bs-toggle="modal" 
+            data-bs-target="#assignDeliveryModal"
+            (click)="selectedCommande = commande"
+            title="Attribuer un livreur"
+          >
+            <i class="fas fa-truck"></i>
+          </button>
+
+          <button 
+            type="button"
+            class="btn-details"
+            (click)="imprimerCommande(commande)"
+            title="Imprimer la commande"
+          >
+            <i class="fas fa-print"></i>
+          </button>
+
+                  <!-- 🆕 Bouton Annuler avec modale -->
           
-            <!-- Bouton Print -->
-            <button 
-              type="button"
-              class="btn-details"
-              (click)="imprimerCommande(commande)"
-              title="Imprimer la commande"
-            >
-              <i class="fas fa-print"></i>
-            </button>
-          </div>
+          <button *ngIf="commande.status.toLowerCase()=== 'en cours' || commande.status.toLowerCase() === 'en attente'"
+          type="button"
+          class="btn-details text-danger"
+          data-bs-toggle="modal"
+          [attr.data-bs-target]="'#annulerModal' + commande.id"
+          title="Annuler la commande">
+          <i class="fas fa-times-circle"></i>
+          </button>
 
         </div>
-        <div class="card-body">
+      </div>
 
-          <p><strong>Client :</strong> {{ commande.client_name }}</p>
-          <p><strong>Téléphone :</strong> {{ commande.client_mobile }}</p>
-          <p>
-            <strong>Adresse :</strong>
-            <span
-              class="adresse-tronquee"
-              data-bs-toggle="modal"
-              data-bs-target="#adresseModal"
-              (click)="adresseComplete = commande.client_adresse"
-              title="Cliquer pour voir l'adresse complète"
+      <div class="card-body">
+        <p><strong>Client :</strong> {{ commande.client_name }}</p>
+        <p><strong>Téléphone :</strong> {{ commande.client_mobile }}</p>
+        <p>
+          <strong>Adresse :</strong>
+          <span
+            class="adresse-tronquee"
+            data-bs-toggle="modal"
+            data-bs-target="#adresseModal"
+            (click)="adresseComplete = commande.client_adresse"
+            title="Cliquer pour voir l'adresse complète"
+          >
+            {{ commande.client_adresse.length > 40 ? (commande.client_adresse | slice:0:40) + '...' : commande.client_adresse }}
+          </span>
+        </p>
+        <p><strong>Date :</strong> {{ commande.created_at | date:'mediumDate' }}</p>
+        <p><strong>Total :</strong> {{ commande.total }} DH</p>
+
+        <p *ngIf="commande.creator_name" class="info-creator">
+          <i class="fas fa-user"></i> Créé par : {{ commande.creator_name }}
+        </p>
+        <p *ngIf="commande.status.toLowerCase() === 'livrée' && commande.delivery_name" class="info-delivery">
+          <i class="fas fa-truck"></i> Livré par : {{ commande.delivery_name }}
+        </p>
+      </div>
+    </div>
+
+    <!-- 🆕 Modale de confirmation pour annuler la commande -->
+    <div
+      class="modal fade"
+      [id]="'annulerModal' + commande.id"
+      tabindex="-1"
+      aria-labelledby="annulerModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="annulerModalLabel">Confirmer l'annulation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            Voulez-vous vraiment annuler la commande <strong>#{{ commande.id }}</strong> ?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="annulerCommande(commande); closeModal('annulerModal' + commande.id)"
             >
-              {{ commande.client_adresse.length > 40 ? (commande.client_adresse | slice:0:40) + '...' : commande.client_adresse }}
-            </span>
-          </p>
-          <p><strong>Date :</strong> {{ commande.created_at | date:'mediumDate' }}</p>
-          <p><strong>Total :</strong> {{ commande.total }} DH</p>
-
-          <p *ngIf="commande.creator_name" class="info-creator">
-            <i class="fas fa-user"></i> Créé par : {{ commande.creator_name }}
-          </p>
-          <p *ngIf="commande.status.toLowerCase() === 'livrée' && commande.delivery_name" class="info-delivery">
-            <i class="fas fa-truck"></i> Livré par : {{ commande.delivery_name }}
-          </p>
+              Oui, annuler
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
+</div>
+
 
   <!-- Modals -->
   <!-- Modals -->
