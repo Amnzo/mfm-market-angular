@@ -46,28 +46,34 @@
   </div>
   <div class="row g-4">
     <div class="col-md-4" *ngFor="let vendeur of stats.vendeurs">
-      <div class="card shadow h-100">
+      <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-user me-2 text-success"></i> {{ vendeur.name }}</h5>
+          <h5 class="card-title text-success">
+            <i class="fas fa-user me-2"></i> {{ vendeur.name }}
+          </h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="fas fa-calendar-day text-primary me-2"></i> Ce mois</span>
-              <span>{{ vendeur.chiffre_mois_courant | number:'1.2-2' }} MAD</span>
+              <span class="fw-bold">{{ vendeur.chiffre_mois_courant | number:'1.2-2' }} MAD</span>
             </li>
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="fas fa-calendar-minus text-warning me-2"></i> Mois précédent</span>
-              <span>{{ vendeur.chiffre_mois_precedent | number:'1.2-2' }} MAD</span>
+              <span class="fw-bold">{{ vendeur.chiffre_mois_precedent | number:'1.2-2' }} MAD</span>
             </li>
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
               <span><i class="fas fa-calendar-alt text-info me-2"></i> Année</span>
-              <span>{{ vendeur.chiffre_annuel | number:'1.2-2' }} MAD</span>
+              <span class="fw-bold">{{ vendeur.chiffre_annuel | number:'1.2-2' }} MAD</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-credit-card text-danger me-2"></i> Crédits sur commandes</span>
+              <span class="fw-bold">{{ vendeur.total_credits || 0 | number:'1.2-2' }} MAD</span>
             </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-
+  
   
 <!-- MODALE : Détail des crédits -->
 <div class="modal fade" id="modalCreditsGlobaux" tabindex="-1" aria-labelledby="modalCreditsGlobauxLabel" aria-hidden="true">
