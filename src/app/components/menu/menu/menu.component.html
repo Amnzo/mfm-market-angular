@@ -83,7 +83,10 @@
   </style>
   
   <div class="menu-container">
-    <div class="logo">MFM Market</div>
+    <div class="logo" (click)="navigateTo('home')" style="cursor: pointer;">
+      MFM Market
+    </div>
+    
     <div class="burger-menu" (click)="toggleMenu()">
       <span></span>
       <span></span>

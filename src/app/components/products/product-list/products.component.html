@@ -1,63 +1,49 @@
-<div class="products-container">
+<div class="products-page">
   <app-menu></app-menu>
-  <div class="page-header">
-    <h2>Produits</h2>
-    <a routerLink="/produits/ajouter" class="add-button">
-      <i class="fas fa-plus"></i> Ajouter un produit
+
+  <div class="products-header">
+    <h1>Nos Produits</h1>
+    <a routerLink="/produits/ajouter" class="btn-add">
+      <i class="fas fa-plus-circle"></i> Ajouter
     </a>
   </div>
 
-  <div class="search-filter">
-    <input type="text" 
-           placeholder="Recherchez un produit..." 
-           class="search-input"
-           [(ngModel)]="searchQuery"
-           (input)="applyFilters()">
-    
-    <select class="status-filter"
-            [(ngModel)]="statusFilter"
-            (change)="applyFilters()">
-      <option value="">Tous les produits</option>
-      <option value="disponible">En stock</option>
-      <option value="epuise">Stock épuisé</option>
+  <div class="filters-bar">
+    <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="🔍 Rechercher un produit...">
+    <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+      <option value="">Tous</option>
+      <option value="disponible">Disponible</option>
+      <option value="epuise">Épuisé</option>
     </select>
   </div>
 
   <div class="products-grid" *ngIf="!loading && !error">
-    <div class="product-card" *ngFor="let product of filteredProducts">
-      <div class="product-image">
-        <img [src]="getFullImageUrl(product.imageurl)" 
-             alt="{{product.name}}" 
-             class="product-image">
-      </div>
-      
-      <div class="product-info">
-        <h3>{{product.name}}</h3>
-        <p class="product-price">{{product.price | number:'1.2-2'}} </p>
-        <p class="product-stock" [class.out-of-stock]="product.qtt_stock === 0">
-          Stock: {{product.qtt_stock}}
-        </p>
-        <p class="product-availability">
-          <span [class.available]="product.avalaible">{{product.avalaible ? 'Disponible' : 'Non disponible'}}</span>
-        </p>
+    <div class="card" *ngFor="let product of filteredProducts">
+      <img [src]="getFullImageUrl(product.imageurl)" alt="{{ product.name }}" />
+
+      <div class="card-body">
+        <h3>{{ product.name }}</h3>
+        <p class="price">Détail: {{ product.price | number:'1.2-2' }} MAD</p>
+        <p class="price2">Gros: {{ product.price2 | number:'1.2-2' }} MAD</p>
+        <p [class.stock-empty]="product.qtt_stock === 0">Stock : {{ product.qtt_stock }}</p>
+        <p class="status" [class.available]="product.avalaible">{{ product.avalaible ? '✔ Disponible' : '❌ Non dispo' }}</p>
       </div>
 
-      <div class="action-buttons">
-        <button (click)="editProduct(product)" class="edit-btn">
-          <i class="fas fa-edit"></i> Modifier
-        </button>
-        <button (click)="deleteProduct(product)" class="delete-btn">
-          <i class="fas fa-trash"></i> Supprimer
-        </button>
+      <div class="card-footer">
+      
+        <div class="footer-actions">
+          <button (click)="editProduct(product)" class="edit-btn">
+            <i class="fas fa-edit"></i> Modifier
+          </button>
+          <button (click)="deleteProduct(product)" class="delete-btn">
+            <i class="fas fa-trash"></i> Supprimer
+          </button>
+        </div>
       </div>
+      
     </div>
   </div>
 
-  <div *ngIf="loading" class="loading-spinner">
-    <i class="fas fa-spinner fa-spin"></i> Chargement des produits...
-  </div>
-
-  <div *ngIf="error" class="error-message">
-    <i class="fas fa-exclamation-circle"></i> {{ error }}
-  </div>
+  <div class="status-message" *ngIf="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+  <div class="status-message" *ngIf="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
 </div>

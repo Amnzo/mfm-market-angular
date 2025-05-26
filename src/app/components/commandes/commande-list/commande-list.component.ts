@@ -67,7 +67,7 @@ export class CommandeListComponent implements OnInit {
   }
 
   loadCommandes(): void {
-    this.http.get<{ orders: Commande[] }>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/orders')
+    this.http.get<{ orders: Commande[] }>('https://railwayaapi-production.up.railway.app/admin/orders')
       .subscribe(response => {
         this.commandes = response.orders;
         this.filteredCommandes = [...this.commandes];
@@ -111,7 +111,7 @@ export class CommandeListComponent implements OnInit {
   }
 
   loadDeliveryUsers() {
-    this.http.get<any[]>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/users')
+    this.http.get<any[]>('https://railwayaapi-production.up.railway.app/admin/users')
       .subscribe(response => {
         console.log(response);
         this.deliveryUsers = response.filter(user => user.user_level === 'livreur'); // Filtrer par level = 1 pour les livreurs
@@ -125,7 +125,7 @@ export class CommandeListComponent implements OnInit {
         delivery_id: this.selectedDeliveryUser
       };
 
-      this.http.post('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/assign-delivery', deliveryData)
+      this.http.post('https://railwayaapi-production.up.railway.app/admin/assign-delivery', deliveryData)
         .subscribe(response => {
           // Mettre à jour le statut de la commande
           const modal = document.getElementById('assignDeliveryModal');

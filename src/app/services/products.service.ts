@@ -18,9 +18,9 @@ export interface Product {
   providedIn: 'root'
 })
 export class ProductsService {
-  private apiUrl = 'https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/products';
-  private addProductUrl = 'https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/add-product';
-  private getproducturl='https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/get_product';
+  private apiUrl = 'https://railwayaapi-production.up.railway.app/admin/products';
+  private addProductUrl = 'https://railwayaapi-production.up.railway.app/admin/add-product';
+  private getproducturl='https://railwayaapi-production.up.railway.app/admin/get_product';
 
   constructor(private http: HttpClient) {}
 

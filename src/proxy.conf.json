@@ -1,6 +1,6 @@
 {
   "/admin/*": {
-    "target": "https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev",
+    "target": "https://railwayaapi-production.up.railway.app",
     "secure": true,
     "changeOrigin": true,
     "logLevel": "debug",

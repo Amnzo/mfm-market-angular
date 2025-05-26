@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
@@ -16,6 +17,7 @@ import { UsersListComponent } from './components/users/users-list/users-list.com
 import { CommandeListComponent } from './components/commandes/commande-list/commande-list.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
 import { MenuComponent } from './components/menu/menu/menu.component';
+import { ClientsListComponent } from './components/clients/clients-list/clients-list.component';
 
 @NgModule({
   declarations: [
@@ -29,12 +31,14 @@ import { MenuComponent } from './components/menu/menu/menu.component';
     UsersListComponent,
     CommandeListComponent,
     AddUserComponent,
-    MenuComponent
+    MenuComponent,
+    ClientsListComponent
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    CommonModule,
     FontAwesomeModule,
     HttpClientModule,
     AppRoutingModule

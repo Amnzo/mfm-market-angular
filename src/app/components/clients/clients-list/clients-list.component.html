@@ -1,0 +1,124 @@
+<style>
+  .client-card {
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease;
+    background-color: #fff;
+  }
+
+  .client-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .client-card .card-header {
+    background: linear-gradient(135deg, #0d6efd, #5a8dee);
+    color: white;
+    padding: 1rem;
+    border-radius: 16px 16px 0 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .client-card .card-body {
+    padding: 1.25rem;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  .client-info {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .client-info i {
+    color: #0d6efd;
+    margin-right: 0.6rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  .client-info span.label {
+    font-weight: 600;
+    color: #6c757d;
+    width: 100px;
+    display: inline-block;
+  }
+
+  .client-info.adresse {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .client-info.adresse a {
+    color: #0d6efd;
+    font-size: 0.85rem;
+    margin-left: 4px;
+    text-decoration: none;
+  }
+
+  .client-info.adresse a:hover {
+    text-decoration: underline;
+  }
+
+  .stat-number {
+    font-weight: 700;
+    color: #0d6efd;
+  }
+</style>
+
+
+<div class="container my-4">
+  <app-menu></app-menu>
+  <h2 class="mb-4 text-center">Nos Clients</h2>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="col" *ngFor="let client of clients">
+      <div class="client-card h-100">
+        <div class="card-header">
+          {{ client.name }}
+        </div>
+        <div class="card-body">
+          <div class="client-info">
+            <i class="fas fa-phone"></i>
+            <span class="label">Téléphone:</span> {{ client.mobile }}
+          </div>
+          <div class="client-info adresse">
+            <i class="fas fa-map-marker-alt"></i>
+            <span class="label">Adresse:</span>
+            {{ client.adresse | slice:0:40 }}...
+            <a href="#" data-bs-toggle="modal" [attr.data-bs-target]="'#modal-' + client.client_id">[voir]</a>
+          </div>
+          <div class="client-info">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="label">Commandes:</span>
+            <span class="stat-number">{{ client.nombre_commandes }}</span>
+          </div>
+          <div class="client-info">
+            <i class="fas fa-money-bill-wave"></i>
+            <span class="label">Total:</span>
+            <span class="stat-number">{{ client.chiffre | number:'1.0-2' }} MAD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal unique pour chaque client -->
+      <div class="modal fade" [id]="'modal-' + client.client_id" tabindex="-1" aria-labelledby="modalLabel{{client.client_id}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" [id]="'modalLabel' + client.client_id">Adresse complète de {{ client.name }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+              {{ client.adresse }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

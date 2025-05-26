@@ -12,6 +12,7 @@ export class MenuComponent {
   menuItems = [
     { route: '/produits', icon: 'fa-box', label: 'Produits' },
     { route: '/commande', icon: 'fa-shopping-cart', label: 'Commandes' },
+    { route: '/clients', icon: 'fa-users', label: 'Clients' },
     { route: '/utilisateurs', icon: 'fa-users', label: 'Utilisateurs' },
 
   ];

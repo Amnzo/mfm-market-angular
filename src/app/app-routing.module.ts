@@ -9,6 +9,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HomeComponent } from './components/home/home.component';
 import { CommandeListComponent } from './components/commandes/commande-list/commande-list.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
+import { ClientsListComponent } from './components/clients/clients-list/clients-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'produits/ajouter', component: AddProductComponent },
   { path: 'produits/edit/:id', component: EditProductComponent },
   { path: 'commande', component: CommandeListComponent },
+  { path: 'clients', component: ClientsListComponent },
   { path: 'utilisateurs', component: UsersListComponent },
   { path: 'utilisateurs/ajouter', component: AddUserComponent },
 

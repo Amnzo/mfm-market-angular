@@ -15,7 +15,7 @@ export class ProductsComponent implements OnInit {
   searchQuery = '';
   statusFilter = ''; 
 
-  baseUrl = 'https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev';
+  baseUrl = 'https://railwayaapi-production.up.railway.app';
   uploads = '/uploads';
 
   constructor(
