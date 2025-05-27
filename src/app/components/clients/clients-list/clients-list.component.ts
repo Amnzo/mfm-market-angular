@@ -15,9 +15,9 @@ export class ClientsListComponent implements OnInit {
   ngOnInit(): void {
     this.loadClients();
   }
-
+  //this.http.get<User[]>('https://railwayaapi-production.up.railway.app/admin/users')
   loadClients(): void {
-    this.http.get<Client[]>('admin/clients').subscribe({
+    this.http.get<Client[]>('https://railwayaapi-production.up.railway.app/admin/clients').subscribe({
       next: (data) => {
         this.clients = data;
         console.log(this.clients);

@@ -28,7 +28,7 @@ export class UsersListComponent implements OnInit {
   }
 
   loadUsers() {
-    this.http.get<User[]>('https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/users')
+    this.http.get<User[]>('https://railwayaapi-production.up.railway.app/admin/users')
       .subscribe(response => {
         this.users = response;
       });
@@ -59,7 +59,7 @@ export class UsersListComponent implements OnInit {
       };
 
       // Faire l'appel API pour mettre à jour l'utilisateur
-      this.http.put(`https://2872714c-427f-45d7-86a5-48cfb2ec630d-00-1poko749ejplg.janeway.replit.dev/admin/update-user/${this.selectedUser.id}`, userData)
+      this.http.put(`https://railwayaapi-production.up.railway.app/admin/update-user/${this.selectedUser.id}`, userData)
         .subscribe(response => {
           console.log('Utilisateur mis à jour avec succès:', response);
           

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-product',
@@ -19,7 +20,7 @@ export class AddProductComponent {
   imageFileInvalid = false;
   selectedFile: File | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -89,6 +90,9 @@ export class AddProductComponent {
         };
         this.imageFileInvalid = false;
         this.selectedFile = null;
+
+        // Redirection vers la liste des produits
+        this.router.navigate(['/produits']);
       },
       error: (err) => {
         console.error('Erreur lors de l\'ajout', err);
