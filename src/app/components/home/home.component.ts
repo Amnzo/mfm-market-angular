@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -7,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomeComponent implements OnInit {
   stats: any = {};
-  baseUrl: string = 'https://railwayaapi-production.up.railway.app';
+  baseUrl: string = environment.apiUrl;
   bord_url: string = this.baseUrl + '/admin/dashboard';
 
   constructor(private http: HttpClient) {}

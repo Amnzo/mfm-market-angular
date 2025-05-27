@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface Product {
   id: number;
@@ -18,9 +19,9 @@ export interface Product {
   providedIn: 'root'
 })
 export class ProductsService {
-  private apiUrl = 'https://railwayaapi-production.up.railway.app/admin/products';
-  private addProductUrl = 'https://railwayaapi-production.up.railway.app/admin/add-product';
-  private getproducturl='https://railwayaapi-production.up.railway.app/admin/get_product';
+  private apiUrl = `${environment.apiUrl}/admin/products`;
+  private addProductUrl = `${environment.apiUrl}/admin/add-product`;
+  private getproducturl = `${environment.apiUrl}/admin/get_product`;
 
   constructor(private http: HttpClient) {}
 

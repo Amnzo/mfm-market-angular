@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-add-product',
@@ -70,8 +71,7 @@ export class AddProductComponent {
       formData.append('image', this.selectedFile, this.selectedFile.name);
     }
 
-    // Exemple d’URL, à changer par celle de ton API réelle
-    const apiUrl = 'admin/add-product';
+    const apiUrl = `${environment.apiUrl}admin/add-product`;
 
     // Envoyer la requête POST
     this.http.post(apiUrl, formData).subscribe({

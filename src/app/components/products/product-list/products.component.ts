@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { ProductsService, Product } from '../../../services/products.service';
 import { Router } from '@angular/router';
 
@@ -15,7 +16,7 @@ export class ProductsComponent implements OnInit {
   searchQuery = '';
   statusFilter = ''; 
 
-  baseUrl = 'https://railwayaapi-production.up.railway.app';
+  baseUrl = environment.apiUrl;
   uploads = '/uploads';
 
   constructor(

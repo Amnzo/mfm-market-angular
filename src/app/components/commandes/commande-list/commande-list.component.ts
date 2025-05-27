@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 interface Paiement {
   paiement_id: number;
@@ -67,7 +68,7 @@ export class CommandeListComponent implements OnInit {
   }
 
   loadCommandes(): void {
-    this.http.get<{ orders: Commande[] }>('https://railwayaapi-production.up.railway.app/admin/orders')
+    this.http.get<{ orders: Commande[] }>(`${environment.apiUrl}/admin/orders`)
       .subscribe(response => {
         this.commandes = response.orders;
         this.filteredCommandes = [...this.commandes];
@@ -111,7 +112,7 @@ export class CommandeListComponent implements OnInit {
   }
 
   loadDeliveryUsers() {
-    this.http.get<any[]>('https://railwayaapi-production.up.railway.app/admin/users')
+    this.http.get<any[]>(`${environment.apiUrl}/admin/users`)
       .subscribe(response => {
         console.log(response);
         this.deliveryUsers = response.filter(user => user.user_level === 'livreur'); // Filtrer par level = 1 pour les livreurs
@@ -125,7 +126,7 @@ export class CommandeListComponent implements OnInit {
         delivery_id: this.selectedDeliveryUser
       };
 
-      this.http.post('https://railwayaapi-production.up.railway.app/admin/assign-delivery', deliveryData)
+      this.http.post(`${environment.apiUrl}admin/assign-delivery`, deliveryData)
         .subscribe(response => {
           // Mettre à jour le statut de la commande
           const modal = document.getElementById('assignDeliveryModal');

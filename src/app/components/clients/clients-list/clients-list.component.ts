@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Client } from '../../../models/client.model';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-clients-list',
@@ -17,7 +18,7 @@ export class ClientsListComponent implements OnInit {
   }
   //this.http.get<User[]>('https://railwayaapi-production.up.railway.app/admin/users')
   loadClients(): void {
-    this.http.get<Client[]>('https://railwayaapi-production.up.railway.app/admin/clients').subscribe({
+    this.http.get<Client[]>(`${environment.apiUrl}/admin/clients`).subscribe({
       next: (data) => {
         this.clients = data;
         console.log(this.clients);

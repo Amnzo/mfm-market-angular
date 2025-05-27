@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 declare var bootstrap: any;
 
 interface User {
@@ -28,7 +29,7 @@ export class UsersListComponent implements OnInit {
   }
 
   loadUsers() {
-    this.http.get<User[]>('https://railwayaapi-production.up.railway.app/admin/users')
+    this.http.get<User[]>(`${environment.apiUrl}/admin/users`)
       .subscribe(response => {
         this.users = response;
       });
@@ -59,7 +60,7 @@ export class UsersListComponent implements OnInit {
       };
 
       // Faire l'appel API pour mettre à jour l'utilisateur
-      this.http.put(`https://railwayaapi-production.up.railway.app/admin/update-user/${this.selectedUser.id}`, userData)
+      this.http.put(`${environment.apiUrl}/admin/update-user/${this.selectedUser.id}`, userData)
         .subscribe(response => {
           console.log('Utilisateur mis à jour avec succès:', response);
           
