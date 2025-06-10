@@ -57,7 +57,8 @@ export class CommandeListComponent implements OnInit {
   selectedDeliveryUser: string | null = null;
   deliveryUsers: any[] = [];
   adresseComplete = '';
-
+  montantPaiement: number = 0;
+  commentairePaiement: string = '';
 
   constructor(private http: HttpClient) {
     this.loadDeliveryUsers();
@@ -96,10 +97,11 @@ export class CommandeListComponent implements OnInit {
 
     // Filtrer par crédit
     if (this.creditFilter) {
-      filtered = filtered.filter(commande => 
-        commande.credit_sur_commande !== null && commande.credit_sur_commande !== ''
+      filtered = filtered.filter(commande =>
+        Number(commande.credit_sur_commande) > 0
       );
     }
+
 
     // Filtrer par nom de client
     if (this.searchTerm) {
@@ -126,7 +128,7 @@ export class CommandeListComponent implements OnInit {
         delivery_id: this.selectedDeliveryUser
       };
 
-      this.http.post(`${environment.apiUrl}admin/assign-delivery`, deliveryData)
+      this.http.post(`${environment.apiUrl}/admin/assign-delivery`, deliveryData)
         .subscribe(response => {
           // Mettre à jour le statut de la commande
           const modal = document.getElementById('assignDeliveryModal');
@@ -151,6 +153,33 @@ export class CommandeListComponent implements OnInit {
 
   formatDateTime(date: string): string {
     return new Date(date).toLocaleString();
+  }
+
+  ouvrirModalReglement(commande: Commande): void {
+    this.selectedCommande = commande;
+    this.montantPaiement = 0;
+    this.commentairePaiement = '';
+  }
+
+  validerPaiement(): void {
+    if (this.montantPaiement > 0 && this.montantPaiement <= Number(this.selectedCommande?.credit_sur_commande)) {
+      // Ici, vous pouvez ajouter la logique pour envoyer les données au serveur
+      console.log('Montant:', this.montantPaiement);
+      console.log('Commentaire:', this.commentairePaiement);
+      
+      // Réinitialiser les champs
+      this.montantPaiement = 0;
+      this.commentairePaiement = '';
+      
+      // Fermer la modale
+      const modal = document.getElementById('reglementCreditModal');
+      if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+      }
+    } else {
+      alert('Le montant doit être supérieur à 0 et ne pas dépasser le crédit restant');
+    }
   }
 
 

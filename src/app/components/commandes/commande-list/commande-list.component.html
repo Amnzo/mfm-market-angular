@@ -246,7 +246,18 @@
             {{ commande.status }}
           </span>
 
-          <i *ngIf="commande.credit_sur_commande" class="fas fa-exclamation-triangle text-warning" title="Commande avec crédit"></i>
+          <button 
+            *ngIf="commande.credit_sur_commande > 0" 
+            type="button" 
+            class="btn btn-link text-warning p-0 m-0"
+            (click)="ouvrirModalReglement(commande)"
+            title="Règler le crédit"
+            data-bs-toggle="modal" 
+            data-bs-target="#reglementCreditModal"
+          >
+            <i class="fas fa-exclamation-triangle"></i>
+          </button>
+
 
           <button 
             type="button" 
@@ -480,7 +491,46 @@
   </div>
 </div>
 
-  
+  <!-- Modal pour règlement du crédit -->
+  <div class="modal fade" id="reglementCreditModal" tabindex="-1" aria-labelledby="reglementCreditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white rounded-top">
+          <h5 class="modal-title" id="reglementCreditModalLabel">
+            <i class="fas fa-money-bill-wave me-2"></i>Règlement du crédit - Commande #{{ selectedCommande?.id }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Montant à payer</label>
+            <div class="input-group">
+              <span class="input-group-text">DH</span>
+              <input type="number" class="form-control" [(ngModel)]="montantPaiement" 
+                     [min]="0" [max]="selectedCommande?.credit_sur_commande" 
+                     placeholder="Montant du paiement">
+            </div>
+            <small class="text-muted">Crédit restant : {{ selectedCommande?.credit_sur_commande | number:'1.2-2' }} DH</small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Commentaires</label>
+            <textarea class="form-control" [(ngModel)]="commentairePaiement" 
+                      placeholder="Détails du paiement (ex: virement, espèces, etc.)" 
+                      rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i>Annuler
+          </button>
+          <button type="button" class="btn btn-primary" (click)="validerPaiement()">
+            <i class="fas fa-check me-1"></i>Valider le paiement
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal pour assigner un livreur -->
   <div class="modal fade" id="assignDeliveryModal" tabindex="-1" aria-labelledby="assignDeliveryModalLabel" aria-hidden="true">
