@@ -161,22 +161,45 @@ export class CommandeListComponent implements OnInit {
     this.commentairePaiement = '';
   }
 
+  reglerCredit(): void {
+    if (this.selectedCommande && this.montantPaiement > 0) {
+      const data = {
+        montant: this.montantPaiement,
+        commentaire: this.commentairePaiement
+      };
+
+      this.http.put(`${environment.apiUrl}/admin/reglement-credit/${this.selectedCommande.id}`, data)
+        .subscribe({
+          next: (response) => {
+            // Réinitialiser les champs
+            this.montantPaiement = 0;
+            this.commentairePaiement = '';
+            
+            // Fermer la modale
+            const modal = document.getElementById('reglementCreditModal');
+            if (modal) {
+              modal.classList.remove('show');
+              modal.style.display = 'none';
+            }
+            
+            // Recharger les commandes pour mettre à jour l'état
+            this.loadCommandes();
+            
+            // Afficher un message de succès
+            alert('Paiement enregistré avec succès !');
+          },
+          error: (error) => {
+            alert('Erreur lors de l\'enregistrement du paiement : ' + error.message);
+          }
+        });
+    } else {
+      alert('Le montant doit être supérieur à 0');
+    }
+  }
+
   validerPaiement(): void {
     if (this.montantPaiement > 0 && this.montantPaiement <= Number(this.selectedCommande?.credit_sur_commande)) {
-      // Ici, vous pouvez ajouter la logique pour envoyer les données au serveur
-      console.log('Montant:', this.montantPaiement);
-      console.log('Commentaire:', this.commentairePaiement);
-      
-      // Réinitialiser les champs
-      this.montantPaiement = 0;
-      this.commentairePaiement = '';
-      
-      // Fermer la modale
-      const modal = document.getElementById('reglementCreditModal');
-      if (modal) {
-        modal.classList.remove('show');
-        modal.style.display = 'none';
-      }
+      this.reglerCredit();
     } else {
       alert('Le montant doit être supérieur à 0 et ne pas dépasser le crédit restant');
     }
