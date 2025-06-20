@@ -197,13 +197,17 @@ export class CommandeListComponent implements OnInit {
     }
   }
 
-  validerPaiement(): void {
-    if (this.montantPaiement > 0 && this.montantPaiement <= Number(this.selectedCommande?.credit_sur_commande)) {
-      this.reglerCredit();
-    } else {
-      alert('Le montant doit être supérieur à 0 et ne pas dépasser le crédit restant');
-    }
+validerPaiement(): void {
+  const montant = parseFloat(this.montantPaiement.toFixed(2));
+  const credit = parseFloat(Number(this.selectedCommande?.credit_sur_commande).toFixed(2));
+
+  if (montant > 0 && montant <= credit + 0.01) {
+    this.reglerCredit();
+  } else {
+    alert("Le montant doit être supérieur à 0 et ne pas dépasser le crédit restant (avec une tolérance de 1 centime).");
   }
+}
+
 
 
   imprimerCommande(commande: any) {

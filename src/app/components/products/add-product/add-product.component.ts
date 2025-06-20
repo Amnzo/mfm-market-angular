@@ -71,7 +71,7 @@ export class AddProductComponent {
       formData.append('image', this.selectedFile, this.selectedFile.name);
     }
 
-    const apiUrl = `${environment.apiUrl}admin/add-product`;
+    const apiUrl = `${environment.apiUrl}/admin/add-product`;
 
     // Envoyer la requête POST
     this.http.post(apiUrl, formData).subscribe({
