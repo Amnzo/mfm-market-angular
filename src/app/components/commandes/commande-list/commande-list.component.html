@@ -431,7 +431,7 @@
                 <tr *ngFor="let item of selectedCommande?.items">
                   <td>{{ item.product_name }}</td>
                   <td class="text-end">{{ item.price | number:'1.2-2' }} DH</td>
-                  <td class="text-end">{{ item.remise | number:'1.2-2' }} %</td>
+                  <td class="text-end">{{ item.remise | number:'1.2-2' }} </td>
                   <td class="text-center">{{ item.quantity }}</td>
                   <td class="text-end">{{ item.total_ligne | number:'1.2-2' }} DH</td>
                 </tr>
