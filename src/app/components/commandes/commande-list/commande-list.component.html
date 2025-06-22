@@ -459,12 +459,17 @@
               </thead>
               <tbody>
                 <tr *ngFor="let cmd of commandesCredit">
-                  <td>{{ cmd.created_at | date:'medium' }}</td>
-                  <td>{{ cmd.cloture_date | date:'medium' }}</td>
-                  <td>{{ cmd.total | number:'1.2-2' }} DH</td>
-                  <td>{{ cmd.credit_sur_commande | number:'1.2-2' }} DH</td>
+                  <td>{{ cmd.created_at | date:'dd-MM-yyyy' }}</td>
+                  <td>{{ cmd.cloture_date | date:'dd-MM-yyyy' }}</td>
+                  <td>{{ cmd.total | number:'1.2-2' }}</td>
+                  <td>{{ cmd.credit_sur_commande | number:'1.2-2' }}</td>
                   <td>{{ cmd.vendeur }}</td>
                   <td>{{ cmd.livreur }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-end fw-bold">Total Crédit :</td>
+                  <td class="fw-bold">{{ sommeCredits() | number:'1.2-2' }}</td>
+                  <td colspan="2"></td>
                 </tr>
               </tbody>
             </table>

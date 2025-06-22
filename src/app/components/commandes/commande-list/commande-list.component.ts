@@ -96,6 +96,12 @@ export class CommandeListComponent implements OnInit {
       });
   }
 
+  sommeCredits(): number {
+    return this.commandesCredit.reduce((total, cmd) => {
+      return total + Number(cmd.credit_sur_commande);
+    }, 0);
+  }
+
   applyFilters(): void {
     let filtered = [...this.commandes];
 
