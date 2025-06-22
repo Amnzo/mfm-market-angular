@@ -19,10 +19,18 @@ interface CommandeItem {
   product_name: string;
 }
 
-
+interface CommandeCredit {
+  created_at: string;
+  cloture_date: string;
+  total: string;
+  credit_sur_commande: string;
+  vendeur: string;
+  livreur: string;
+}
 
 interface Commande {
   id: number;
+  client_id: number;  // ID du client
   client_name: string;
   client_mobile: string;
   client_adresse: string;
@@ -59,6 +67,7 @@ export class CommandeListComponent implements OnInit {
   adresseComplete = '';
   montantPaiement: number = 0;
   commentairePaiement: string = '';
+  commandesCredit: any[] = [];  // Pour stocker les commandes avec crédit
 
   constructor(private http: HttpClient) {
     this.loadDeliveryUsers();
@@ -73,6 +82,17 @@ export class CommandeListComponent implements OnInit {
       .subscribe(response => {
         this.commandes = response.orders;
         this.filteredCommandes = [...this.commandes];
+      });
+  }
+
+  loadCommandesCredit(clientId: number): void {
+    console.log("**************");
+    console.log(clientId);
+    console.log("**************");
+
+    this.http.get<CommandeCredit[]>(`${environment.apiUrl}/admin/orders-with-credit/${clientId}`)
+      .subscribe(response => {
+        this.commandesCredit = response;
       });
   }
 
