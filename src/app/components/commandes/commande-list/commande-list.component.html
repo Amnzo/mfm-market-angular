@@ -374,23 +374,23 @@
     <div class="modal-content">
       <div class="modal-header bg-primary text-white rounded-top">
         <h5 class="modal-title" id="detailsModalLabel">
-          <i class="fas fa-info-circle me-2"></i>Détails de la commande #{{ selectedCommande?.id }}
+          <i class="fas fa-info-circle me-2"></i>تفاصيل الطلب #{{ selectedCommande?.id }}
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
       <div class="modal-body">
         <div class="row mb-4">
           <div class="col-md-6">
-            <p><strong><i class="fas fa-user me-1"></i>Client :</strong> {{ selectedCommande?.client_name }}</p>
-            <p><strong><i class="fas fa-phone me-1"></i>Téléphone :</strong> {{ selectedCommande?.client_mobile }}</p>
-            <p><strong><i class="fas fa-map-marker-alt me-1"></i>Adresse :</strong> {{ selectedCommande?.client_adresse }}</p>
-            <p><strong><i class="fas fa-calendar-alt me-1"></i>Date :</strong> {{ selectedCommande?.created_at | date:'medium' }}</p>
-            <p><strong><i class="fas fa-coins me-1"></i>Total :</strong> {{ selectedCommande?.total | number:'1.2-2' }} DH</p>
+            <p><strong><i class="fas fa-user me-1"></i>العميل :</strong> {{ selectedCommande?.client_name }}</p>
+            <p><strong><i class="fas fa-phone me-1"></i>الهاتف :</strong> {{ selectedCommande?.client_mobile }}</p>
+            <p><strong><i class="fas fa-map-marker-alt me-1"></i>العنوان :</strong> {{ selectedCommande?.client_adresse }}</p>
+            <p><strong><i class="fas fa-calendar-alt me-1"></i>التاريخ :</strong> {{ selectedCommande?.created_at | date:'medium' }}</p>
+            <p><strong><i class="fas fa-coins me-1"></i>المجموع :</strong> {{ selectedCommande?.total | number:'1.2-2' }} </p>
             <div *ngIf="selectedCommande?.credit_sur_commande" class="alert alert-warning p-2 mb-3">
               <div class="d-flex align-items-center">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 <div>
-                  <strong>Crédit à suivre :</strong> 
+                  <strong>الدين المتبقي :</strong> 
                   <span class="credit-attention">{{ selectedCommande?.credit_sur_commande | number:'1.2-2' }} DH</span>
                 </div>
               </div>
@@ -420,20 +420,20 @@
             <table class="table table-sm table-striped align-middle">
               <thead>
                 <tr>
-                  <th>Produit</th>
-                  <th class="text-end">Prix unitaire</th>
-                  <th class="text-end">Remise</th>
-                  <th class="text-center">Quantité</th>
-                  <th class="text-end">Total ligne</th>
+                  <th>المنتج</th>
+                  <th>السعر</th>
+                  <th>الخصم</th>
+                  <th>الكمية</th>
+                  <th>المجموع</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let item of selectedCommande?.items">
                   <td>{{ item.product_name }}</td>
-                  <td class="text-end">{{ item.price | number:'1.2-2' }} DH</td>
-                  <td class="text-end">{{ item.remise | number:'1.2-2' }} </td>
-                  <td class="text-center">{{ item.quantity }}</td>
-                  <td class="text-end">{{ item.total_ligne | number:'1.2-2' }} DH</td>
+                  <td>{{ item.price | number:'1.2-2' }} </td>
+                  <td>{{ item.remise }} </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.total_ligne | number:'1.2-2' }} </td>
                 </tr>
               </tbody>
             </table>
@@ -443,18 +443,18 @@
         <!-- Commandes avec crédit -->
         <div class="commandes-credit-section" *ngIf="commandesCredit?.length > 0">
           <h5 class="text-primary border-bottom pb-2 mb-3">
-            <i class="fas fa-history me-2"></i>Historique des commandes avec crédit
+            <i class="fas fa-history me-2"></i>سجل الطلبات مع الديون
           </h5>
           <div class="table-responsive">
             <table class="table table-sm table-striped align-middle">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Clôture</th>
-                  <th>Total</th>
-                  <th>Crédit</th>
-                  <th>Vendeur</th>
-                  <th>Livreur</th>
+                  <th>التاريخ</th>
+                  <th>الغلق</th>
+                  <th>المجموع</th>
+                  <th>الدين</th>
+                  <th>البائع</th>
+                  <th>السائق</th>
                 </tr>
               </thead>
               <tbody>
@@ -467,7 +467,7 @@
                   <td>{{ cmd.livreur }}</td>
                 </tr>
                 <tr>
-                  <td colspan="3" class="text-end fw-bold">Total Crédit :</td>
+                  <td colspan="3" class="text-end fw-bold">إجمالي الديون :</td>
                   <td class="fw-bold">{{ sommeCredits() | number:'1.2-2' }}</td>
                   <td colspan="2"></td>
                 </tr>
@@ -479,15 +479,16 @@
         <!-- Paiements -->
         <div class="paiements-section" *ngIf="selectedCommande?.paiements?.length > 0">
           <h5 class="text-primary border-bottom pb-2 mb-3">
-            <i class="fas fa-money-bill-wave me-2"></i>Paiements
+            <i class="fas fa-money-bill-wave me-2"></i>المدفوعات
           </h5>
           <div class="table-responsive">
             <table class="table table-sm table-striped align-middle">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th class="text-end">Montant</th>
-                  <th>Mode de paiement</th>
+                  <th>التاريخ</th>
+                  <th class="text-end">المبلغ</th>
+                  <th>طريقة الدفع</th>
+                  <th>تعليق</th>
                 </tr>
               </thead>
               <tbody>
@@ -498,12 +499,14 @@
                   </td>
                   <td class="text-end paiement-amount">
                     <i class="fas fa-money-bill-wave me-1"></i>
-                    {{ paiement.montant | number:'1.2-2' }} DH
+                    {{ paiement.montant | number:'1.2-2' }} 
+           
                   </td>
                   <td class="paiement-method">
                     <i class="fas fa-credit-card me-1"></i>
                     {{ paiement.mode_paiement }}
                   </td>
+                  <td>{{paiement.commentaire}}</td>
                 </tr>
               </tbody>
             </table>
@@ -544,7 +547,7 @@
 
           <div class="mb-3">
             <label class="form-label">Commentaires</label>
-            <textarea class="form-control" [(ngModel)]="commentairePaiement" 
+            <textarea required class="form-control" [(ngModel)]="commentairePaiement" 
                       placeholder="Détails du paiement (ex: virement, espèces, etc.)" 
                       rows="3"></textarea>
           </div>

@@ -188,7 +188,7 @@ export class CommandeListComponent implements OnInit {
   }
 
   reglerCredit(): void {
-    if (this.selectedCommande && this.montantPaiement > 0) {
+    if (this.montantPaiement > 0 && this.commentairePaiement.trim()) {
       const data = {
         montant: this.montantPaiement,
         commentaire: this.commentairePaiement
@@ -219,7 +219,11 @@ export class CommandeListComponent implements OnInit {
           }
         });
     } else {
-      alert('Le montant doit être supérieur à 0');
+        if (this.montantPaiement <= 0) {
+        alert('Le montant doit être supérieur à 0');
+      } else {
+        alert('Le commentaire est obligatoire');
+      }
     }
   }
 
@@ -234,102 +238,172 @@ validerPaiement(): void {
   }
 }
 
-
-
-  imprimerCommande(commande: any) {
-    let itemsHTML = '';
-    commande.items.forEach(item => {
-      itemsHTML += `
-        <tr>
-          <td>${item.product_name}</td>
-          <td>${item.quantity}</td>
-          <td>${item.price} MAD</td>
-          <td>${item.remise} %</td>
-          <td>${item.total_ligne} MAD</td>
-        </tr>
-      `;
-    });
-  
-    let paiementsHTML = '';
-    commande.paiements.forEach(paiement => {
-      paiementsHTML += `
-        <tr>
-          <td>${new Date(paiement.date_paiement).toLocaleDateString()}</td>
-          <td>${paiement.montant} MAD</td>
-          <td>${paiement.mode_paiement}</td>
-        </tr>
-      `;
-    });
-  
-    const printContent = `
-      <html>
-      <head>
-        <title>Impression commande #${commande.id}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-        <style>
-          body { padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-          h2, h3 { text-align: center; margin-bottom: 20px; }
-          .table thead th { background-color: #0d6efd; color: white; }
-          .info-section p { font-size: 1rem; margin: 0.3rem 0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h2 class="mb-4">Détails de la commande #${commande.id}</h2>
-  
-          <div class="info-section mb-4">
-            <p><strong>Client :</strong> ${commande.client_name}</p>
-            <p><strong>Adresse :</strong> ${commande.client_adresse}</p>
-            <p><strong>Mobile :</strong> ${commande.client_mobile}</p>
-            <p><strong>Status :</strong> <span class="badge bg-success">${commande.status}</span></p>
-            <p><strong>Date création :</strong> ${new Date(commande.created_at).toLocaleString()}</p>
-            <p><strong>Total :</strong> <span class="fw-bold">${commande.total} MAD</span></p>
-          </div>
-  
-          <h3>Produits</h3>
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Produit</th>
-                <th>Quantité</th>
-                <th>Prix unitaire</th>
-                <th>Remise (%)</th>
-                <th>Total ligne</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHTML}
-            </tbody>
-          </table>
-  
-          <h3>Paiements</h3>
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Montant</th>
-                <th>Mode de paiement</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${paiementsHTML}
-            </tbody>
-          </table>
-        </div>
-      </body>
-      </html>
-    `;
-  
-    const newWindow = window.open('', '_blank', 'width=900,height=700');
-    if (newWindow) {
-      newWindow.document.write(printContent);
-      newWindow.document.close();
-      newWindow.focus();
-      newWindow.print();
-    }
+async imprimerCommande(commande: any) {
+  // Vérifier si la commande existe
+  if (!commande) {
+    alert('Aucune commande sélectionnée');
+    return;
   }
-  
 
+  // Récupérer les commandes avec crédit
+  const commandesCredit = await this.http.get<CommandeCredit[]>(`${environment.apiUrl}/admin/orders-with-credit/${commande.client_id}`).toPromise();
+
+  // Générer le HTML complet
+  const printContent = `
+    <html>
+    <head>
+      <title>طلب رقم ${commande.id}</title>
+      <style>
+        body {
+          font-family: 'Tahoma', 'Arial', sans-serif;
+          font-size: 16px;
+          color: #000;
+          direction: rtl;
+          text-align: right;
+          padding: 20px;
+          line-height: 1.6;
+        }
+        h2 {
+          text-align: center;
+          margin: 20px 0;
+          font-family: 'Tahoma', 'Arial', sans-serif;
+          font-size: 24px;
+          font-weight: bold;
+          border-bottom: 2px solid #000;
+          padding-bottom: 10px;
+        }
+        h3 {
+          text-align: center;
+          margin: 20px 0;
+          font-family: 'Tahoma', 'Arial', sans-serif;
+          font-size: 20px;
+          font-weight: bold;
+          color: #333;
+        }
+        p {
+          margin: 10px 0;
+          font-size: 16px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+          font-family: 'Tahoma', 'Arial', sans-serif;
+          font-size: 16px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+          border: 1px solid #000;
+          padding: 12px;
+          text-align: right;
+          font-size: 16px;
+        }
+        th {
+          background-color: #f8f9fa;
+          font-weight: bold;
+          color: #333;
+        }
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        tr:hover {
+          background-color: #f5f5f5;
+        }
+        .total-amount {
+          font-size: 18px;
+          font-weight: bold;
+          color: #000;
+        }
+        .credit-amount {
+          font-size: 18px;
+          font-weight: bold;
+          color: #dc3545;
+        }
+      </style>
+    </head>
+    <body>
+      <h2>طلب رقم ${commande.id}</h2>
+
+      <p>الزبون: ${commande.client_name}</p>
+      <p>العنوان: ${commande.client_adresse}</p>
+      <p>الهاتف: ${commande.client_mobile}</p>
+      <p>الحالة: ${commande.status}</p>
+      <p>تاريخ الإنشاء: ${new Date(commande.created_at).toLocaleString()}</p>
+      <p>المجموع العام: ${commande.total}</p>
+      <p>رقم البائع: ${commande.vendeur_phone}</p>
+
+      <h3>تفاصيل المنتجات</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>المنتج</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+            <th>الخصم</th>
+            <th>الإجمالي</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${commande.items.map(item => `
+            <tr>
+              <td>${item.product_name}</td>
+              <td>${item.quantity}</td>
+              <td>${item.price}</td>
+              <td>${item.remise}</td>
+              <td>${item.total_ligne}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      ${commandesCredit.length > 0 ? `
+        <!-- Commandes avec crédit -->
+        <h3>سجل الطلبات مع الديون</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>التسليم</th>
+              <th>المجموع</th>
+              <th>الدين</th>
+              <th>البائع</th>
+              <th>السائق</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${commandesCredit.map(cmd => `
+              <tr>
+                <td>${new Date(cmd.created_at).toLocaleDateString('ar-MA', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
+                <td>${new Date(cmd.cloture_date).toLocaleDateString('ar-MA', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
+                <td>${Number(cmd.total).toFixed(2)}</td>
+                <td>${Number(cmd.credit_sur_commande).toFixed(2)}</td>
+                <td>${cmd.vendeur}</td>
+                <td>${cmd.livreur}</td>
+              </tr>
+            `).join('')}
+            <tr>
+              <td colspan="3" class="text-end fw-bold">إجمالي الديون :</td>
+              <td class="fw-bold">${commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0).toFixed(2)}</td>
+              <td colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+      ` : ''}
+    </body>
+    </html>
+  `;
+
+  // Ouvrir une nouvelle fenêtre pour l'impression
+  const newWindow = window.open('', '_blank', 'width=600,height=800');
+  if (newWindow) {
+    newWindow.document.write(printContent);
+    newWindow.document.close();
+    newWindow.focus();
+    newWindow.print();
+  } else {
+    alert('Impossible d\'ouvrir la fenêtre d\'impression');
+  }
+}
 
   annulerCommande(commande: any): void {
     const url = `/admin/cancel-order/${commande.id}`;

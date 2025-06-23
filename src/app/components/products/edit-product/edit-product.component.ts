@@ -28,34 +28,37 @@ export class EditProductComponent implements OnInit {
     private http: HttpClient
   ) {}
 
-  ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-    if (id) {
-      // ⚠️ À adapter avec ton API réelle
-      this.http.get(`admin/get_product/${id}`).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.product = {
-            id: data.id,
-            name: data.name || '',
-            price: data.price || 0,
-            price2: data.price2 || 0,
-            available: data.avalaible,
-            qtt_stock: data.qtt_stock || 0,
-            imageurl: data.imageurl || ''
-          };
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement du produit', err);
-          alert('Erreur lors du chargement du produit');
-          this.router.navigate(['/produits']);
-        }
-      });
-    } else {
-      alert('Produit non trouvé');
-      this.router.navigate(['/produits']);
-    }
+ngOnInit(): void {
+  const id = this.route.snapshot.params['id'];
+  if (id) {
+    const apiUrl = `https://railwayaapi-production.up.railway.app/admin/get_product/${id}`;
+    console.log('URL API utilisée :', apiUrl);
+
+    this.http.get(apiUrl).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.product = {
+          id: data.id,
+          name: data.name || '',
+          price: data.price || 0,
+          price2: data.price2 || 0,
+          available: data.avalaible,
+          qtt_stock: data.qtt_stock || 0,
+          imageurl: data.imageurl || ''
+        };
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement du produit', err);
+        alert('Erreur lors du chargement du produit');
+        this.router.navigate(['/produits']);
+      }
+    });
+  } else {
+    alert('Produit non trouvé');
+    this.router.navigate(['/produits']);
   }
+}
+
 
   onFileChange(event: any) {
     const file = event.target.files[0];
