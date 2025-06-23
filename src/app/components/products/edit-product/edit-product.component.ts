@@ -84,49 +84,53 @@ ngOnInit(): void {
     }
   }
 
-  update() {
-    console.log("voici les nouvvel valeur de produit****");
-    console.log(this.product);
-    if (
-      !this.product.name ||
-      this.product.price === null ||
-      this.product.price2 === null ||
-      this.product.qtt_stock === null
-    ) {
-      alert('Veuillez remplir tous les champs correctement.');
-      return;
-    }
+update() {
+  console.log("voici les nouvelles valeurs de produit ****");
+  console.log(this.product);
 
-    this.loading = true;
-    this.error = null;
-
-    const formData = new FormData();
-    formData.append('name', this.product?.name || '');
-    formData.append('price', this.product?.price ? this.product.price.toString() : '0');
-    formData.append('price2', this.product?.price2 ? this.product.price2.toString() : '0');
-    formData.append('available', (this.product?.available).toString());
-    formData.append('qtt_stock', this.product?.qtt_stock ? this.product.qtt_stock.toString() : '0');
-
-    if (this.selectedFile) {
-      formData.append('image', this.selectedFile, this.selectedFile.name);
-    }
-
-    // ⚠️ À adapter avec ton API réelle
-    this.http.put(`admin/update-product/${this.product.id}`, formData).subscribe({
-      next: (response) => {
-        this.loading = false;
-        console.log('Produit mis à jour avec succès', response);
-        alert('Produit mis à jour avec succès');
-        this.router.navigate(['/produits']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = err.message || 'Erreur lors de la mise à jour du produit';
-        console.error('Erreur lors de la mise à jour', err);
-        alert(this.error);
-      }
-    });
+  if (
+    !this.product.name ||
+    this.product.price === null ||
+    this.product.price2 === null ||
+    this.product.qtt_stock === null
+  ) {
+    alert('Veuillez remplir tous les champs correctement.');
+    return;
   }
+
+  this.loading = true;
+  this.error = null;
+
+  const formData = new FormData();
+  formData.append('name', this.product?.name || '');
+  formData.append('price', this.product?.price ? this.product.price.toString() : '0');
+  formData.append('price2', this.product?.price2 ? this.product.price2.toString() : '0');
+  formData.append('available', (this.product?.available).toString());
+  formData.append('qtt_stock', this.product?.qtt_stock ? this.product.qtt_stock.toString() : '0');
+
+  if (this.selectedFile) {
+    formData.append('image', this.selectedFile, this.selectedFile.name);
+  }
+
+  const apiUrl = `https://railwayaapi-production.up.railway.app/admin/update-product/${this.product.id}`;
+  console.log("URL de mise à jour :", apiUrl);
+
+  this.http.put(apiUrl, formData).subscribe({
+    next: (response) => {
+      this.loading = false;
+      console.log('Produit mis à jour avec succès', response);
+      alert('Produit mis à jour avec succès');
+      this.router.navigate(['/produits']);
+    },
+    error: (err) => {
+      this.loading = false;
+      this.error = err.message || 'Erreur lors de la mise à jour du produit';
+      console.error('Erreur lors de la mise à jour', err);
+      alert(this.error);
+    }
+  });
+}
+
 
   cancel() {
     this.router.navigate(['/produits']);
