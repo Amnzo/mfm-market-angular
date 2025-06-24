@@ -81,6 +81,7 @@
             <th>ID</th>
             <th>Nom</th>
             <th>Email</th>
+            <th>Phone</th>
             <th>Rôle</th>
             <th>Actif</th>
             <th>Actions</th>
@@ -91,6 +92,7 @@
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
+            <td>{{ user.telephone }}</td>
             <td>{{ user.user_level }}</td>
             <td>
               <span class="badge" [ngClass]="user.actif ? 'bg-success' : 'bg-danger'">
@@ -124,6 +126,10 @@
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input type="email" class="form-control" id="email" [(ngModel)]="selectedUser.email" name="email" required />
+            </div>
+            <div class="mb-3">
+              <label for="telephone" class="form-label">Téléphone</label>
+              <input type="tel" class="form-control" id="telephone" [(ngModel)]="selectedUser.telephone" name="telephone" required />
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>

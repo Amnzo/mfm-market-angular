@@ -21,6 +21,7 @@ export class AddUserComponent {
       nom: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      telephone: ['', Validators.required],
       user_level: ['', Validators.required]
     });
   }

@@ -327,7 +327,6 @@ async imprimerCommande(commande: any) {
       <p>الزبون: ${commande.client_name}</p>
       <p>العنوان: ${commande.client_adresse}</p>
       <p>الهاتف: ${commande.client_mobile}</p>
-      <p>الحالة: ${commande.status}</p>
       <p>تاريخ الإنشاء: ${new Date(commande.created_at).toLocaleString()}</p>
       <p>المجموع العام: ${commande.total}</p>
       <p>رقم البائع: ${commande.vendeur_phone}</p>
@@ -353,42 +352,26 @@ async imprimerCommande(commande: any) {
               <td>${item.total_ligne}</td>
             </tr>
           `).join('')}
+
+           <tr>
+            <td colspan="4" style="text-align: right; font-weight: bold;"> إجمالي الطلب: </td>
+            <td style="font-weight: bold; color: #000;">${commande.total}</td>
+          </tr>
+        
+          <tr>
+            <td colspan="4" style="text-align: right; font-weight: bold; color: #dc3545;">إجمالي الديون:</td>
+
+            <td style="font-weight: bold; color: #dc3545;">${commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0).toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="text-align: right; font-weight: bold; color: #000;">المجموع النهائي:</td>
+            <td style="font-weight: bold; color: #000;">${(Number(commande.total) + commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0)).toFixed(2)}</td>
+          </tr>
+         
         </tbody>
       </table>
 
-      ${commandesCredit.length > 0 ? `
-        <!-- Commandes avec crédit -->
-        <h3>سجل الطلبات مع الديون</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>التاريخ</th>
-              <th>التسليم</th>
-              <th>المجموع</th>
-              <th>الدين</th>
-              <th>البائع</th>
-              <th>السائق</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${commandesCredit.map(cmd => `
-              <tr>
-                <td>${new Date(cmd.created_at).toLocaleDateString('ar-MA', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
-                <td>${new Date(cmd.cloture_date).toLocaleDateString('ar-MA', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
-                <td>${Number(cmd.total).toFixed(2)}</td>
-                <td>${Number(cmd.credit_sur_commande).toFixed(2)}</td>
-                <td>${cmd.vendeur}</td>
-                <td>${cmd.livreur}</td>
-              </tr>
-            `).join('')}
-            <tr>
-              <td colspan="3" class="text-end fw-bold">إجمالي الديون :</td>
-              <td class="fw-bold">${commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0).toFixed(2)}</td>
-              <td colspan="2"></td>
-            </tr>
-          </tbody>
-        </table>
-      ` : ''}
+
     </body>
     </html>
   `;

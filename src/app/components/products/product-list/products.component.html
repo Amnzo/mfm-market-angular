@@ -19,7 +19,9 @@
 
   <div class="products-grid" *ngIf="!loading && !error">
     <div class="card" *ngFor="let product of filteredProducts">
-      <img [src]="getFullImageUrl(product.imageurl)" alt="{{ product.name }}" />
+      <img [src]="product.imageurl || 'assets/images/no_picture.jpg'" alt="{{ product.name }}" />
+
+
 
       <div class="card-body">
         <h3>{{ product.name }}</h3>

@@ -7,10 +7,11 @@ interface User {
   id: number;
   name: string;
   email: string;
+  telephone: string;
   level: number | null;
   user_level: string;
   actif: boolean;
-  password:string
+  password: string
 }
 
 @Component({
@@ -87,10 +88,11 @@ export class UsersListComponent implements OnInit {
       id: 0,
       name: '',
       email: '',
+      telephone: '',
       level: null,
       user_level: '',
       actif: false,
-      password:''
+      password: ''
     };
   }
 }
