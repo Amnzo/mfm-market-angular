@@ -1,0 +1,91 @@
+<div class="categories-page">
+  <app-menu></app-menu>
+
+  <div class="categories-header">
+    <h1>Catégories</h1>
+    <button (click)="openAddCategoryModal()" class="btn-add">
+      <i class="fas fa-plus-circle"></i> Ajouter
+    </button>
+  </div>
+
+  
+
+  <div class="filters-bar">
+    <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder=" Rechercher une catégorie...">
+  </div>
+
+  <div class="categories-grid" *ngIf="!loading && !error">
+    <div class="card" *ngFor="let category of filteredCategories">
+      <div class="card-body">
+        <h3>{{ category.name }}</h3>
+        <p class="status" [class.active]="category.actif">{{ category.actif ? ' Active' : ' Inactive' }}</p>
+      </div>
+
+      <div class="card-footer">
+        <div class="footer-actions">
+          <button (click)="openEditCategoryModal(category)" class="edit-btn">
+            <i class="fas fa-edit"></i> Modifier
+          </button>
+          <button (click)="deleteCategory(category)" class="delete-btn">
+            <i class="fas fa-trash"></i> Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-message" *ngIf="loading"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+  <div class="status-message" *ngIf="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+</div>
+
+<!-- Modal Ajouter Catégorie -->
+<div class="modal" [ngClass]="{'show': addCategoryModal}" (click)="closeAddCategoryModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Ajouter une catégorie</h2>
+      <button type="button" class="close" (click)="closeAddCategoryModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="addCategoryForm" (ngSubmit)="onAddCategorySubmit()">
+        <div class="form-group">
+          <label for="name">Nom de la catégorie</label>
+          <input type="text" id="name" formControlName="name" required>
+        </div>
+        <div class="form-group">
+          <label for="actif">Actif</label>
+          <input type="checkbox" id="actif" formControlName="actif">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn-primary" [disabled]="!addCategoryForm.valid">Ajouter</button>
+      <button type="button" class="btn-secondary" (click)="closeAddCategoryModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Modifier Catégorie -->
+<div class="modal" [ngClass]="{'show': editCategoryModal}" (click)="closeEditCategoryModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Modifier la catégorie</h2>
+      <button type="button" class="close" (click)="closeEditCategoryModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="editCategoryForm" (ngSubmit)="onEditCategorySubmit()">
+        <div class="form-group">
+          <label for="edit-name">Nom de la catégorie</label>
+          <input type="text" id="edit-name" formControlName="name" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-actif">Actif</label>
+          <input type="checkbox" id="edit-actif" formControlName="actif">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn-primary" [disabled]="!editCategoryForm.valid">Modifier</button>
+      <button type="button" class="btn-secondary" (click)="closeEditCategoryModal()">Annuler</button>
+    </div>
+  </div>
+</div>

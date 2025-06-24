@@ -10,6 +10,7 @@ import { HomeComponent } from './components/home/home.component';
 import { CommandeListComponent } from './components/commandes/commande-list/commande-list.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
 import { ClientsListComponent } from './components/clients/clients-list/clients-list.component';
+import { CategoriesListComponent } from './components/categories/categories-list/categories-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'produits/edit/:id', component: EditProductComponent },
   { path: 'commande', component: CommandeListComponent },
   { path: 'clients', component: ClientsListComponent },
+  { path: 'categories', component: CategoriesListComponent },
   { path: 'utilisateurs', component: UsersListComponent },
   { path: 'utilisateurs/ajouter', component: AddUserComponent },
 

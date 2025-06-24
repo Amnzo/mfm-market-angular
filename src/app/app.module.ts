@@ -18,6 +18,7 @@ import { CommandeListComponent } from './components/commandes/commande-list/comm
 import { AddUserComponent } from './components/users/add-user/add-user.component';
 import { MenuComponent } from './components/menu/menu/menu.component';
 import { ClientsListComponent } from './components/clients/clients-list/clients-list.component';
+import { CategoriesListComponent } from './components/categories/categories-list/categories-list.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ClientsListComponent } from './components/clients/clients-list/clients-
     CommandeListComponent,
     AddUserComponent,
     MenuComponent,
-    ClientsListComponent
+    ClientsListComponent,
+    CategoriesListComponent
   ],
   imports: [
     BrowserModule,
