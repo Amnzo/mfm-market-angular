@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
@@ -8,20 +8,41 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './add-product.component.html',
   //styleUrls: ['./add-product.component.css']
 })
-export class AddProductComponent {
+export class AddProductComponent implements OnInit {
   product = {
     name: '',
     price: null,
     price2: null,
     available: true,
     qtt_stock: null,
-    imageurl: ''
+    imageurl: '',
+    category_id: null
   };
 
+  categories: any[] = [];
+  loadingCategories = true;
   imageFileInvalid = false;
   selectedFile: File | null = null;
 
   constructor(private http: HttpClient, private router: Router) {}
+
+  ngOnInit() {
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.loadingCategories = true;
+    this.http.get<any[]>('https://railwayaapi-production.up.railway.app/mobile/categories').subscribe({
+      next: (response) => {
+        this.categories = response;
+        this.loadingCategories = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des catégories', error);
+        this.loadingCategories = false;
+      }
+    });
+  }
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -53,6 +74,7 @@ export class AddProductComponent {
       this.product.price === null ||
       this.product.price2 === null ||
       this.product.qtt_stock === null ||
+      this.product.category_id === null ||
       this.imageFileInvalid
     ) {
       alert('Veuillez remplir tous les champs correctement.');
@@ -66,6 +88,7 @@ export class AddProductComponent {
     formData.append('price2', this.product.price2.toString());
     formData.append('available', this.product.available.toString());
     formData.append('qtt_stock', this.product.qtt_stock.toString());
+    formData.append('category_id', this.product.category_id.toString());
 
     if (this.selectedFile) {
       formData.append('image', this.selectedFile, this.selectedFile.name);
@@ -86,7 +109,8 @@ export class AddProductComponent {
           price2: null,
           available: true,
           qtt_stock: null,
-          imageurl: ''
+          imageurl: '',
+          category_id: null
         };
         this.imageFileInvalid = false;
         this.selectedFile = null;

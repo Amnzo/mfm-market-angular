@@ -3,8 +3,8 @@
 
   <div class="categories-header">
     <h1>Catégories</h1>
-    <button (click)="openAddCategoryModal()" class="btn-add">
-      <i class="fas fa-plus-circle"></i> Ajouter
+    <button (click)="openAddCategoryModal()" class="btn btn-primary">
+      <i class="fas fa-plus-circle"></i> Ajouter une catégorie
     </button>
   </div>
 
@@ -46,7 +46,7 @@
       <button type="button" class="close" (click)="closeAddCategoryModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <form [formGroup]="addCategoryForm" (ngSubmit)="onAddCategorySubmit()">
+      <form [formGroup]="addCategoryForm" (ngSubmit)="onAddCategorySubmit()" class="modal-form">
         <div class="form-group">
           <label for="name">Nom de la catégorie</label>
           <input type="text" id="name" formControlName="name" required>
@@ -55,11 +55,11 @@
           <label for="actif">Actif</label>
           <input type="checkbox" id="actif" formControlName="actif">
         </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="!addCategoryForm.valid">Ajouter</button>
+          <button type="button" class="btn btn-secondary" (click)="closeAddCategoryModal()">Annuler</button>
+        </div>
       </form>
-    </div>
-    <div class="modal-footer">
-      <button type="submit" class="btn-primary" [disabled]="!addCategoryForm.valid">Ajouter</button>
-      <button type="button" class="btn-secondary" (click)="closeAddCategoryModal()">Annuler</button>
     </div>
   </div>
 </div>

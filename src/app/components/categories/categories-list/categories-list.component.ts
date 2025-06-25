@@ -16,6 +16,14 @@ export class CategoriesListComponent {
   filteredCategories: any[] = [];
   addCategoryModal = false;
   editCategoryModal = false;
+
+  toggleAddCategoryModal() {
+    this.addCategoryModal = !this.addCategoryModal;
+  }
+
+  toggleEditCategoryModal() {
+    this.editCategoryModal = !this.editCategoryModal;
+  }
   editCategoryData: any = null;
   addCategoryForm: FormGroup;
   editCategoryForm: FormGroup;
@@ -64,11 +72,11 @@ export class CategoriesListComponent {
   }
 
   openAddCategoryModal() {
-    this.addCategoryModal = true;
+    this.toggleAddCategoryModal();
   }
 
   closeAddCategoryModal() {
-    this.addCategoryModal = false;
+    this.toggleAddCategoryModal();
     this.addCategoryForm.reset();
   }
 
@@ -90,7 +98,7 @@ export class CategoriesListComponent {
   onAddCategorySubmit() {
     if (this.addCategoryForm.valid) {
       const categoryData = this.addCategoryForm.value;
-      this.http.post('admin/add-category', categoryData).subscribe({
+      this.http.post('https://railwayaapi-production.up.railway.app/admin/add-category', categoryData).subscribe({
         next: () => {
           this.closeAddCategoryModal();
           this.loadCategories();
@@ -107,7 +115,7 @@ export class CategoriesListComponent {
   onEditCategorySubmit() {
     if (this.editCategoryForm.valid && this.editCategoryData) {
       const categoryData = this.editCategoryForm.value;
-      this.http.put(`admin/categories/${this.editCategoryData.id}`, categoryData).subscribe({
+      this.http.put(`https://railwayaapi-production.up.railway.app/admin/edit-category/${this.editCategoryData.id}`, categoryData).subscribe({
         next: () => {
           this.closeEditCategoryModal();
           this.loadCategories();

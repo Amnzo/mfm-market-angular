@@ -169,6 +169,16 @@
     </div>
 
     <div>
+      <label for="category_id">Catégorie :</label>
+      <select id="category_id" name="category_id" [(ngModel)]="product.category_id" required>
+        <option value="">Sélectionnez une catégorie</option>
+        <option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <div>
       <label for="imagefile">Image du produit :</label>
       <input
         type="file"
