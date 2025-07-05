@@ -238,100 +238,136 @@ validerPaiement(): void {
   }
 }
 
+
+annulerCommande(commande: any): void {
+  const url = `/admin/cancel-order/${commande.id}`;
+  
+  this.http.put(url, {}).subscribe({
+    next: (response) => {
+      console.log('Commande annulée avec succès:', response);
+      // Rafraîchir la liste des commandes pour voir le nouveau statut
+      this.loadCommandes();
+    },
+    error: (error) => {
+      console.error('Erreur lors de l\'annulation de la commande:', error);
+      // Afficher un message d'erreur à l'utilisateur si besoin
+    }
+  });
+}
+
+
+
+
+
 async imprimerCommande(commande: any) {
-  // Vérifier si la commande existe
   if (!commande) {
     alert('Aucune commande sélectionnée');
     return;
   }
 
-  // Récupérer les commandes avec crédit
-  const commandesCredit = await this.http.get<CommandeCredit[]>(`${environment.apiUrl}/admin/orders-with-credit/${commande.client_id}`).toPromise();
+  const commandesCredit = await this.http
+    .get<CommandeCredit[]>(`${environment.apiUrl}/admin/orders-with-credit/${commande.client_id}`)
+    .toPromise();
 
-  // Générer le HTML complet
+  const totalCredit = commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0);
+  const totalFinal = Number(commande.total) + totalCredit;
+  const logoUrl = `${window.location.origin}/assets/launcher.png`;
+
+
   const printContent = `
     <html>
     <head>
-      <title>طلب رقم ${commande.id}</title>
+      <title>فاتورة رقم ${commande.id}</title>
       <style>
         body {
-          font-family: 'Tahoma', 'Arial', sans-serif;
-          font-size: 16px;
-          color: #000;
-          direction: rtl;
-          text-align: right;
-          padding: 20px;
-          line-height: 1.6;
-        }
-        h2 {
-          text-align: center;
-          margin: 20px 0;
-          font-family: 'Tahoma', 'Arial', sans-serif;
-          font-size: 24px;
-          font-weight: bold;
-          border-bottom: 2px solid #000;
-          padding-bottom: 10px;
-        }
-        h3 {
-          text-align: center;
-          margin: 20px 0;
-          font-family: 'Tahoma', 'Arial', sans-serif;
-          font-size: 20px;
-          font-weight: bold;
-          color: #333;
-        }
-        p {
-          margin: 10px 0;
-          font-size: 16px;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin: 20px 0;
-          font-family: 'Tahoma', 'Arial', sans-serif;
-          font-size: 16px;
-          box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        th, td {
-          border: 1px solid #000;
-          padding: 12px;
-          text-align: right;
-          font-size: 16px;
-        }
-        th {
-          background-color: #f8f9fa;
-          font-weight: bold;
-          color: #333;
-        }
-        tr:nth-child(even) {
-          background-color: #f9f9f9;
-        }
-        tr:hover {
-          background-color: #f5f5f5;
-        }
-        .total-amount {
-          font-size: 18px;
-          font-weight: bold;
-          color: #000;
-        }
-        .credit-amount {
-          font-size: 18px;
-          font-weight: bold;
-          color: #dc3545;
-        }
+  font-family: 'Arial', sans-serif;
+  font-size: 11px;
+  color: #000;
+  direction: rtl;
+  text-align: right;
+  padding: 15px;
+  background-color: #fff;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #000;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+.logo {
+  width: 80px;
+  height: auto;
+}
+.company-info {
+  font-size: 11px;
+  line-height: 1.4;
+  padding-right: 10px;
+}
+h2 {
+  font-size: 16px;
+  margin: 15px 0;
+  text-align: center;
+  border: 1px solid #000;
+  padding: 6px;
+  background-color: #f7f7f7;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  border: 1px solid #333;
+  padding: 4px;
+  text-align: center;
+  font-size: 10px;
+}
+th {
+  background-color: #eee;
+  font-weight: bold;
+}
+.totals {
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+.footer-note {
+  margin-top: 20px;
+  font-size: 10px;
+  border-top: 1px dashed #aaa;
+  padding-top: 6px;
+  color: #333;
+}
+.client-info {
+  margin-top: 8px;
+  line-height: 1.4;
+  font-size: 11px;
+}
+
       </style>
     </head>
     <body>
-      <h2>طلب رقم ${commande.id}</h2>
+      <div class="header">
+        <img src="${logoUrl}" class="logo" alt="Logo"  class="logo" alt="Logo">
+        <div class="company-info">
+          <strong>fmw-market Company</strong><br>
+          Avenue du 2 Mars<br>
+          Quartier Bab Lamrissa, Salé 11005<br>
+          Préfecture de Salé, Région Rabat-Salé-Kénitra<br>
+          Tél: 0606070649
+        </div>
+      </div>
 
-      <p>الزبون: ${commande.client_name}</p>
-      <p>العنوان: ${commande.client_adresse}</p>
-      <p>الهاتف: ${commande.client_mobile}</p>
-      <p>تاريخ الإنشاء: ${new Date(commande.created_at).toLocaleString()}</p>
-      <p>المجموع العام: ${commande.total}</p>
-      <p>رقم البائع: ${commande.vendeur_phone}</p>
+      <h2>فاتورة الطلب رقم ${commande.id}</h2>
 
-      <h3>تفاصيل المنتجات</h3>
+      <div class="client-info">
+        <p><strong>الزبون:</strong> ${commande.client_name}</p>
+        <p><strong>العنوان:</strong> ${commande.client_adresse}</p>
+        <p><strong>الهاتف:</strong> ${commande.client_mobile}</p>
+        <p><strong>البائع:</strong> ${commande.vendeur_phone}</p>
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -339,7 +375,7 @@ async imprimerCommande(commande: any) {
             <th>الكمية</th>
             <th>السعر</th>
             <th>الخصم</th>
-            <th>الإجمالي</th>
+            <th>المجموع</th>
           </tr>
         </thead>
         <tbody>
@@ -353,57 +389,63 @@ async imprimerCommande(commande: any) {
             </tr>
           `).join('')}
 
-           <tr>
-            <td colspan="4" style="text-align: right; font-weight: bold;"> إجمالي الطلب: </td>
-            <td style="font-weight: bold; color: #000;">${commande.total}</td>
+          <tr class="totals">
+            <td colspan="4">إجمالي الطلب</td>
+            <td>${commande.total}</td>
           </tr>
-        
-          <tr>
-            <td colspan="4" style="text-align: right; font-weight: bold; color: #dc3545;">إجمالي الديون:</td>
-
-            <td style="font-weight: bold; color: #dc3545;">${commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0).toFixed(2)}</td>
+          <tr class="totals red">
+            <td colspan="4">إجمالي الديون</td>
+            <td>${totalCredit.toFixed(2)}</td>
           </tr>
-          <tr>
-            <td colspan="4" style="text-align: right; font-weight: bold; color: #000;">المجموع النهائي:</td>
-            <td style="font-weight: bold; color: #000;">${(Number(commande.total) + commandesCredit.reduce((total, cmd) => total + Number(cmd.credit_sur_commande), 0)).toFixed(2)}</td>
+          <tr class="totals">
+            <td colspan="4">المجموع النهائي</td>
+            <td>${totalFinal.toFixed(2)}</td>
           </tr>
-         
         </tbody>
       </table>
 
-
+      <div class="footer-note">
+        تم إصدار هذه الفاتورة بتاريخ اليوم. يرجى التسديد خلال 45 يومًا بعد التسليم.<br>
+        <strong>العنوان:</strong><br>
+        Avenue du 2 Mars<br>
+        Quartier Bab Lamrissa, Salé 11005<br>
+        Préfecture de Salé, Région Rabat-Salé-Kénitra<br>
+        المغرب
+      </div>
     </body>
     </html>
   `;
 
-  // Ouvrir une nouvelle fenêtre pour l'impression
-  const newWindow = window.open('', '_blank', 'width=600,height=800');
+  const newWindow = window.open('', '_blank', 'width=800,height=1000');
   if (newWindow) {
     newWindow.document.write(printContent);
     newWindow.document.close();
-    newWindow.focus();
-    newWindow.print();
+
+    // Attendre que la nouvelle fenêtre soit prête
+    newWindow.onload = () => {
+      const logo = newWindow.document.querySelector('img');
+      if (logo && !logo.complete) {
+        logo.onload = () => {
+          newWindow.focus();
+          newWindow.print();
+        };
+      } else {
+        newWindow.focus();
+        newWindow.print();
+      }
+    };
   } else {
     alert('Impossible d\'ouvrir la fenêtre d\'impression');
   }
 }
 
-  annulerCommande(commande: any): void {
-    const url = `/admin/cancel-order/${commande.id}`;
-    
-    this.http.put(url, {}).subscribe({
-      next: (response) => {
-        console.log('Commande annulée avec succès:', response);
-        // Rafraîchir la liste des commandes pour voir le nouveau statut
-        this.loadCommandes();
-      },
-      error: (error) => {
-        console.error('Erreur lors de l\'annulation de la commande:', error);
-        // Afficher un message d'erreur à l'utilisateur si besoin
-      }
-    });
-  }
   
+
+
+
+
+
+
 
 
 

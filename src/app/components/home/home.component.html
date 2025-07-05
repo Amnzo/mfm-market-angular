@@ -6,15 +6,15 @@
 <div class="container-fluid mt-4" *ngIf="stats?.stats && stats?.vendeurs">
   <app-menu></app-menu>
 
-  <h2 class="mb-4">Tableau de bord</h2>
+  <h2 class="mb-4">لوحة التحكم</h2>
 
+  <!-- Ligne des cartes supérieures bien alignées -->
   <div class="row g-4 mb-4">
-    <!-- Carte Crédit total -->
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card text-white bg-primary shadow h-100">
         <div class="card-body">
           <h5 class="card-title d-flex justify-content-between align-items-center">
-            <span><i class="fas fa-credit-card"></i> Crédit total</span>
+            <span><i class="fas fa-credit-card"></i>الديون</span>
             <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#modalCreditsGlobaux">
               <i class="fas fa-eye"></i>
             </button>
@@ -24,26 +24,35 @@
       </div>
     </div>
 
-    <!-- Carte Commandes -->
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card text-white bg-success shadow h-100">
         <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Commandes</h5>
+          <h5 class="card-title"><i class="fas fa-shopping-cart"></i> الطلبات</h5>
           <p class="fs-3">{{ stats.stats.nombre_commandes }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Carte Chiffre d'affaires -->
-    <div class="col-md-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-info shadow h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="fas fa-calendar-day"></i> رقم المعاملات لهذا الشهر</h5>
+          <p class="fs-3">{{ totalChiffreMoisCourant | number:'1.2-2' }} MAD</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
       <div class="card text-white bg-warning shadow h-100">
         <div class="card-body">
-          <h5 class="card-title"><i class="fas fa-chart-line"></i> Chiffre d'affaires</h5>
+          <h5 class="card-title"><i class="fas fa-chart-line"></i> رقم المعاملات </h5>
           <p class="fs-3">{{ stats.stats.chiffre | number:'1.2-2' }} MAD</p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Liste des vendeurs -->
   <div class="row g-4">
     <div class="col-md-4" *ngFor="let vendeur of stats.vendeurs">
       <div class="card shadow-sm border-0 h-100">
@@ -53,23 +62,18 @@
           </h5>
           <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-calendar-day text-primary me-2"></i> Ce mois</span>
+              <span><i class="fas fa-calendar-day text-primary me-2"></i> هذا الشهر</span>
               <span class="fw-bold">{{ vendeur.chiffre_mois_courant | number:'1.2-2' }} MAD</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-calendar-minus text-warning me-2"></i> Mois précédent</span>
+              <span><i class="fas fa-calendar-minus text-warning me-2"></i> الشهر السابق</span>
               <span class="fw-bold">{{ vendeur.chiffre_mois_precedent | number:'1.2-2' }} MAD</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-calendar-alt text-info me-2"></i> Année</span>
-              <span class="fw-bold">{{ vendeur.chiffre_annuel | number:'1.2-2' }} MAD</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-credit-card text-danger me-2"></i> Crédits sur commandes</span>
-              <span class="fw-bold">{{ vendeur.total_credits || 0 | number:'1.2-2' }} MAD</span>
-            </li>
+              <span><i class="fas fa-calendar-alt text-info me-2"></i> السنة</span>
+
             <li class="list-group-item d-flex justify-content-between">
-              <span><i class="fas fa-credit-card text-danger me-2"></i> Crédits</span>
+              <span><i class="fas fa-credit-card text-danger me-2"></i> الديون</span>
               <span class="fw-bold">{{ vendeur.total_credits || 0 | number:'1.2-2' }} MAD</span>
             </li>
           </ul>
@@ -77,70 +81,67 @@
       </div>
     </div>
   </div>
-  
-  
-<!-- MODALE : Détail des crédits -->
-<div class="modal fade" id="modalCreditsGlobaux" tabindex="-1" aria-labelledby="modalCreditsGlobauxLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content shadow-lg rounded-4">
-      <div class="modal-header bg-gradient bg-primary text-white">
-        <h5 class="modal-title" id="modalCreditsGlobauxLabel">
-          <i class="fas fa-credit-card me-2"></i> Détails des crédits
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-      </div>
-      <div class="modal-body">
-        <div *ngIf="stats.credits?.length > 0; else aucunCredit">
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-primary text-center">
-                <tr>
-                  <th>#</th>
-                  <th>Client</th>
-                  <th>Montant Total</th>
-                  <th>Crédit</th>
-                  <th>Vendeur</th>
-                  <th>Livreur</th>
-                  <th>Date commande</th>
-                  <th>Date clôture</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let credit of stats.credits; let i = index">
-                  <td class="text-center fw-bold">{{ i + 1 }}</td>
-                  <td>{{ credit.nom_client }}</td>
-                  <td><span class="badge bg-success">{{ credit.total | number:'1.2-2' }} MAD</span></td>
-                  <td><span class="badge bg-warning text-dark">{{ credit.credit_sur_commande | number:'1.2-2' }} MAD</span></td>
-                  <td>{{ credit.vendeur }}</td>
-                  <td>{{ credit.livreur }}</td>
-                  <td>{{ credit.date_order | date:'dd/MM/yyyy à HH:mm' }}</td>
-                  <td>
-                    <span *ngIf="credit.cloture_date; else enCours">
-                      {{ credit.cloture_date | date:'dd/MM/yyyy à HH:mm' }}
-                    </span>
-                    <ng-template #enCours>
-                      <span class="badge bg-secondary">En cours</span>
-                    </ng-template>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
+  <!-- MODALE : Détail des crédits -->
+  <div class="modal fade" id="modalCreditsGlobaux" tabindex="-1" aria-labelledby="modalCreditsGlobauxLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content shadow-lg rounded-4">
+        <div class="modal-header bg-gradient bg-primary text-white">
+          <h5 class="modal-title" id="modalCreditsGlobauxLabel">
+            <i class="fas fa-credit-card me-2"></i> تفاصيل الرصيد
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
         </div>
-        <ng-template #aucunCredit>
-          <div class="alert alert-info text-center mt-4">
-            Aucun crédit enregistré.
+        <div class="modal-body">
+          <div *ngIf="stats.credits?.length > 0; else aucunCredit">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle">
+                <thead class="table-primary text-center">
+                  <tr>
+                    <th>#</th>
+                    <th>العميل</th>
+                    <th>المبلغ الإجمالي</th>
+                    <th>الرصيد</th>
+                    <th>البائع</th>
+                    <th>الموزع</th>
+                    <th>تاريخ الطلب</th>
+                    <th>تاريخ الإغلاق</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let credit of stats.credits; let i = index">
+                    <td class="text-center fw-bold">{{ i + 1 }}</td>
+                    <td>{{ credit.nom_client }}</td>
+                    <td><span class="badge bg-success">{{ credit.total | number:'1.2-2' }} MAD</span></td>
+                    <td><span class="badge bg-warning text-dark">{{ credit.credit_sur_commande | number:'1.2-2' }} MAD</span></td>
+                    <td>{{ credit.vendeur }}</td>
+                    <td>{{ credit.livreur }}</td>
+                    <td>{{ credit.date_order | date:'dd/MM/yyyy à HH:mm' }}</td>
+                    <td>
+                      <span *ngIf="credit.cloture_date; else enCours">
+                        {{ credit.cloture_date | date:'dd/MM/yyyy à HH:mm' }}
+                      </span>
+                      <ng-template #enCours>
+                        <span class="badge bg-secondary">قيد التنفيذ</span>
+                      </ng-template>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </ng-template>
-      </div>
-      <div class="modal-footer bg-light">
-        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          <i class="fas fa-times me-1"></i> Fermer
-        </button>
+          <ng-template #aucunCredit>
+            <div class="alert alert-info text-center mt-4">
+              لا يوجد رصيد مسجل.
+            </div>
+          </ng-template>
+        </div>
+        <div class="modal-footer bg-light">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> إغلاق
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-
 </div>
