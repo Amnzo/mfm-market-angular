@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
 interface Paiement {
@@ -69,7 +70,10 @@ export class CommandeListComponent implements OnInit {
   commentairePaiement: string = '';
   commandesCredit: any[] = [];  // Pour stocker les commandes avec crédit
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
     this.loadDeliveryUsers();
   }
 
@@ -185,6 +189,13 @@ export class CommandeListComponent implements OnInit {
     this.selectedCommande = commande;
     this.montantPaiement = 0;
     this.commentairePaiement = '';
+  }
+
+  editCommande(commande: Commande): void {
+    // Navigate to the edit page with the commande data
+    this.router.navigate(['/commande/edit'], {
+      state: { commande: commande }
+    });
   }
 
   reglerCredit(): void {

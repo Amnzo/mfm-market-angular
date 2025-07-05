@@ -1,0 +1,86 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">Modifier la Commande #{{ commande?.id }}</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <form *ngIf="!loading" [formGroup]="commandeForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="clientName" class="form-label">Nom du Client</label>
+                  <input type="text" class="form-control" id="clientName" formControlName="client_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="clientMobile" class="form-label">Téléphone</label>
+                  <input type="text" class="form-control" id="clientMobile" formControlName="client_mobile">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="clientAdresse" class="form-label">Adresse</label>
+                  <textarea class="form-control" id="clientAdresse" rows="3" formControlName="client_adresse"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <h5 class="mt-4">Produits de la Commande</h5>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix Unitaire</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of commande?.items">
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.total_ligne }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                  <button class="btn btn-secondary" routerLink="/commande">
+                    <i class="fas fa-arrow-left me-2"></i> Retour
+                  </button>
+                  <button class="btn btn-primary" (click)="updateCommande()" [disabled]="!commandeForm.valid">
+                    <i class="fas fa-save me-2"></i> Sauvegarder
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="text-center" *ngIf="loading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

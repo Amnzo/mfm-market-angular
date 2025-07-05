@@ -11,6 +11,7 @@ import { CommandeListComponent } from './components/commandes/commande-list/comm
 import { AddUserComponent } from './components/users/add-user/add-user.component';
 import { ClientsListComponent } from './components/clients/clients-list/clients-list.component';
 import { CategoriesListComponent } from './components/categories/categories-list/categories-list.component';
+import { CommandeEditComponent } from './components/commandes/commande-edit/commande-edit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -20,6 +21,8 @@ const routes: Routes = [
   { path: 'produits/ajouter', component: AddProductComponent },
   { path: 'produits/edit/:id', component: EditProductComponent },
   { path: 'commande', component: CommandeListComponent },
+  { path: 'commande/edit/:id', component: CommandeEditComponent },
+  { path: 'commande/edit', component: CommandeEditComponent },
   { path: 'clients', component: ClientsListComponent },
   { path: 'categories', component: CategoriesListComponent },
   { path: 'utilisateurs', component: UsersListComponent },

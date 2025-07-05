@@ -15,6 +15,7 @@ import { AddProductComponent } from './components/products/add-product/add-produ
 import { EditProductComponent } from './components/products/edit-product/edit-product.component';
 import { UsersListComponent } from './components/users/users-list/users-list.component';
 import { CommandeListComponent } from './components/commandes/commande-list/commande-list.component';
+import { CommandeEditComponent } from './components/commandes/commande-edit/commande-edit.component';
 import { AddUserComponent } from './components/users/add-user/add-user.component';
 import { MenuComponent } from './components/menu/menu/menu.component';
 import { ClientsListComponent } from './components/clients/clients-list/clients-list.component';
@@ -24,17 +25,18 @@ import { CategoriesListComponent } from './components/categories/categories-list
   declarations: [
     AppComponent,
     LoginComponent,
-    SidebarComponent,
-    HomeComponent,
     ProductsComponent,
     AddProductComponent,
     EditProductComponent,
     UsersListComponent,
+    SidebarComponent,
+    HomeComponent,
     CommandeListComponent,
+    CommandeEditComponent,
     AddUserComponent,
-    MenuComponent,
     ClientsListComponent,
-    CategoriesListComponent
+    CategoriesListComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
