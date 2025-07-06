@@ -72,8 +72,15 @@
                             style="width: 80px;">
                         </td>
                         <td>{{ item.price}}</td>
-                        <td>{{ item.remise }}</td>
-                        <td>{{ item.total_ligne  }}</td>
+                        <td>
+                          <input type="number" class="form-control" 
+                            [value]="item.remise" 
+                            (change)="updateItemRemise(item, +$event.target.value)"
+                            min="0"
+                            style="width: 80px;">
+                        </td>
+                        <td>{{ item.total_ligne | number:'1.2-2' }}</td>
+
                         <td>
                           <button class="btn btn-danger btn-sm" 
                                   (click)="removeItem(item)"

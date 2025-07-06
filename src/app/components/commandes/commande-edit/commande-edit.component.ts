@@ -132,12 +132,12 @@ export class CommandeEditComponent implements OnInit {
   private calculateTotal(): void {
     if (!this.commande || !this.commande.items) return;
     
-    this.commande.items_total = this.commande.items.reduce((total, item) => {
+    this.commande.items_total = this.commande.items.reduce((total: number, item: CommandeItem) => {
       const prix = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
-      const remise = typeof item.remise === 'string' ? parseFloat(item.remise) : item.remise;
+      const remiseValue = typeof item.remise === 'string' ? parseFloat(item.remise) : item.remise;
       const quantite = typeof item.quantity === 'string' ? parseInt(item.quantity.toString()) : item.quantity;
       
-      const totalItem = (prix - (prix * (remise / 100))) * quantite;
+      const totalItem = (prix * quantite) - remiseValue;
       return total + totalItem;
     }, 0);
   }
@@ -146,10 +146,9 @@ export class CommandeEditComponent implements OnInit {
   private calculateItemTotal(price: number | string, quantity: number | string, remise: number | string): number {
     const prix = typeof price === 'string' ? parseFloat(price) : price;
     const quantite = typeof quantity === 'string' ? parseInt(quantity) : quantity;
-    const remisePercent = typeof remise === 'string' ? parseFloat(remise) : remise;
+    const remiseValue = typeof remise === 'string' ? parseFloat(remise) : remise;
     
-    const remiseAmount = prix * (remisePercent / 100);
-    return (prix - remiseAmount) * quantite;
+    return (prix * quantite) - remiseValue;
   }
 
   // Reset new item form
@@ -202,15 +201,20 @@ export class CommandeEditComponent implements OnInit {
 
   // Update item quantity
   updateItemQuantity(item: CommandeItem, newQuantity: number): void {
-    if (!this.commande || !this.commande.items) return;
-    if (newQuantity <= 0) return;
+    if (!this.commande) return;
+    
+    item.quantity = newQuantity.toString();
+    item.total_ligne = this.calculateItemTotal(item.price, item.quantity, item.remise).toString();
+    this.calculateTotal();
+  }
 
-    const index = this.commande.items.indexOf(item);
-    if (index > -1) {
-      this.commande.items[index].quantity = newQuantity;
-      this.commande.items[index].total_ligne = this.calculateItemTotal(item.price, newQuantity, item.remise);
-      this.calculateTotal();
-    }
+  // Update item remise
+  updateItemRemise(item: CommandeItem, newRemise: number): void {
+    if (!this.commande) return;
+    
+    item.remise = newRemise.toString();
+    item.total_ligne = this.calculateItemTotal(item.price, item.quantity, item.remise).toString();
+    this.calculateTotal();
   }
 
   loadCommande(id: string): void {
