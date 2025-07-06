@@ -199,6 +199,43 @@ export class CommandeEditComponent implements OnInit {
     }
   }
 
+  // Save commande
+  saveCommande(): void {
+    if (!this.commande) {
+      console.log('Aucune commande à sauvegarder');
+      return;
+    }
+  
+    const data = {
+      user_id: 1, // À remplacer par l'ID de l'utilisateur actuel
+      client_id: this.commande.client_id,
+      client_name: this.commandeForm.value.client_name,
+      client_mobile: this.commandeForm.value.client_mobile,
+      client_adresse: this.commandeForm.value.client_adresse,
+      client_gps: this.commande.client_gps,
+      date_order: new Date().toISOString(),
+      items: this.commande.items.map(item => ({
+        product_id: item.product_id,
+        quantity: parseInt(item.quantity.toString()),
+        price: parseFloat(item.price.toString()),
+        discount: parseFloat(item.remise.toString())
+      })),
+      total: this.commande.items_total
+    };
+  
+    this.http.put(`${environment.apiUrl}/admin/edit_order/${this.commande.id}`, data)
+      .subscribe({
+        next: (response) => {
+          console.log('Commande mise à jour avec succès:', response);
+          // Redirection ou autre action
+        },
+        error: (error) => {
+          console.error('Erreur:', error);
+          // Gestion de l'erreur
+        }
+      });
+  }
+
   // Update item quantity
   updateItemQuantity(item: CommandeItem, newQuantity: number): void {
     if (!this.commande) return;
