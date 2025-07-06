@@ -192,6 +192,8 @@ export class CommandeListComponent implements OnInit {
   }
 
   editCommande(commande: Commande): void {
+    console.log('Editing commande:', commande);
+    console.log('Commande items:', commande.items);
     // Navigate to the edit page with the commande data
     this.router.navigate(['/commande/edit'], {
       state: { commande: commande }

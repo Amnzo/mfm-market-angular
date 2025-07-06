@@ -6,12 +6,13 @@ import { environment } from '../../../../environments/environment';
 
 interface CommandeItem {
   item_id: number;
-  quantity: number;
-  price: string;
-  remise: string;
-  total_ligne: string;
+  quantity: number | string;
+  price: number | string;
+  remise: number | string;
+  total_ligne: number | string;
   product_id: number;
   product_name: string;
+  is_new?: boolean;
 }
 
 interface Paiement {
@@ -34,6 +35,7 @@ interface Commande {
   delivery_name: string | null;
   items: CommandeItem[];
   paiements: Paiement[];
+  items_total: number;
 }
 
 @Component({
@@ -46,6 +48,10 @@ export class CommandeEditComponent implements OnInit {
   commandeForm: FormGroup;
   loading = true;
   error: string = '';
+  newProduct: string = '';
+  newQuantity: number = 1;
+  newPrice: number = 0;
+  newRemise: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,12 +63,37 @@ export class CommandeEditComponent implements OnInit {
       client_mobile: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       client_adresse: ['', Validators.required]
     });
+  }
 
+  ngOnInit(): void {
     // Get the commande data from history state
-    const state = history.state;
+    const state = window.history.state;
+    console.log('History state:', state);
+    
     if (state && state.commande) {
+      console.log('Received commande data:', state.commande);
       this.commande = state.commande;
-      this.initializeForm();
+      console.log('Commande items:', this.commande.items);
+      
+      // Vérifier que les items existent et sont un tableau
+      if (this.commande.items && Array.isArray(this.commande.items)) {
+        console.log('Items trouvés:', this.commande.items.length);
+        this.initializeForm();
+      } else {
+        console.log('Aucun item trouvé ou items n\'est pas un tableau');
+        this.commande.items = []; // Initialiser un tableau vide
+        this.initializeForm();
+      }
+    } else {
+      console.log('No state data found, checking route params');
+      // If no state data, try to load from route params
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        console.log('Loading commande with ID:', id);
+        this.loadCommande(id);
+      } else {
+        this.loading = false;
+      }
     }
   }
 
@@ -73,19 +104,127 @@ export class CommandeEditComponent implements OnInit {
         client_mobile: this.commande.client_mobile,
         client_adresse: this.commande.client_adresse
       });
+      
+      // Initialize items and calculate their totals
+      if (this.commande.items && Array.isArray(this.commande.items)) {
+        console.log('Initializing items:', this.commande.items);
+        this.commande.items.forEach((item, index) => {
+          console.log(`Item ${index}:`, item);
+          // S'assurer que les propriétés sont correctement typées
+          item.total_ligne = this.calculateItemTotal(item.price, item.quantity, item.remise);
+        });
+        
+        // Calculate total for all items
+        this.calculateTotal();
+        console.log('Items après initialisation:', this.commande.items);
+      }
+      
       this.loading = false;
     }
   }
 
-  ngOnInit(): void {
-    // No need to load data from API since we have it from the state
+  // AJOUTER CETTE MÉTHODE MANQUANTE
+  trackByItemId(index: number, item: CommandeItem): number {
+    return item.item_id;
+  }
+
+  // Calculate total for all items
+  private calculateTotal(): void {
+    if (!this.commande || !this.commande.items) return;
+    
+    this.commande.items_total = this.commande.items.reduce((total, item) => {
+      const prix = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
+      const remise = typeof item.remise === 'string' ? parseFloat(item.remise) : item.remise;
+      const quantite = typeof item.quantity === 'string' ? parseInt(item.quantity.toString()) : item.quantity;
+      
+      const totalItem = (prix - (prix * (remise / 100))) * quantite;
+      return total + totalItem;
+    }, 0);
+  }
+
+  // Calculate total for a specific item
+  private calculateItemTotal(price: number | string, quantity: number | string, remise: number | string): number {
+    const prix = typeof price === 'string' ? parseFloat(price) : price;
+    const quantite = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+    const remisePercent = typeof remise === 'string' ? parseFloat(remise) : remise;
+    
+    const remiseAmount = prix * (remisePercent / 100);
+    return (prix - remiseAmount) * quantite;
+  }
+
+  // Reset new item form
+  private resetNewItemForm(): void {
+    this.newProduct = '';
+    this.newQuantity = 1;
+    this.newPrice = 0;
+    this.newRemise = 0;
+  }
+
+  addNewItem(): void {
+    if (!this.commande) return;
+    
+    // Initialiser le tableau items s'il n'existe pas
+    if (!this.commande.items) {
+      this.commande.items = [];
+    }
+    
+    if (!this.newProduct || this.newQuantity <= 0 || this.newPrice <= 0) {
+      alert('Veuillez remplir tous les champs correctement');
+      return;
+    }
+
+    const newId = Math.max(0, ...this.commande.items.map(i => i.item_id)) + 1;
+    const newItem: CommandeItem = {
+      item_id: newId,
+      product_id: 0, // Will be set by backend
+      quantity: this.newQuantity.toString(),
+      price: this.newPrice.toString(),
+      remise: this.newRemise.toString(),
+      total_ligne: this.calculateItemTotal(this.newPrice.toString(), this.newQuantity.toString(), this.newRemise.toString()).toString(),
+      product_name: this.newProduct,
+      is_new: true
+    };
+
+    this.commande.items.push(newItem);
+    this.calculateTotal();
+    this.resetNewItemForm();
+  }
+
+  // Remove item
+  removeItem(item: CommandeItem): void {
+    if (!this.commande || !this.commande.items) return;
+    const index = this.commande.items.indexOf(item);
+    if (index > -1) {
+      this.commande.items.splice(index, 1);
+      this.calculateTotal();
+    }
+  }
+
+  // Update item quantity
+  updateItemQuantity(item: CommandeItem, newQuantity: number): void {
+    if (!this.commande || !this.commande.items) return;
+    if (newQuantity <= 0) return;
+
+    const index = this.commande.items.indexOf(item);
+    if (index > -1) {
+      this.commande.items[index].quantity = newQuantity;
+      this.commande.items[index].total_ligne = this.calculateItemTotal(item.price, newQuantity, item.remise);
+      this.calculateTotal();
+    }
   }
 
   loadCommande(id: string): void {
     this.http.get<Commande>(`${environment.apiUrl}/admin/orders/${id}`)
       .subscribe({
         next: (response) => {
+          console.log('Commande chargée depuis API:', response);
           this.commande = response;
+          
+          // Vérifier que les items existent
+          if (!this.commande.items) {
+            this.commande.items = [];
+          }
+          
           this.initializeForm();
         },
         error: (error) => {
@@ -99,10 +238,19 @@ export class CommandeEditComponent implements OnInit {
   updateCommande(): void {
     if (!this.commande) return;
 
+    // Prepare items data
+    const itemsData = this.commande.items?.map(item => ({
+      item_id: item.item_id,
+      quantity: item.quantity,
+      remise: item.remise,
+      total_ligne: item.total_ligne
+    })) || [];
+
     const data = {
       client_name: this.commandeForm.value.client_name,
       client_mobile: this.commandeForm.value.client_mobile,
-      client_adresse: this.commandeForm.value.client_adresse
+      client_adresse: this.commandeForm.value.client_adresse,
+      items: itemsData
     };
 
     this.http.put(`${environment.apiUrl}/admin/orders/${this.commande.id}`, data)

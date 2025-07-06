@@ -9,7 +9,13 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body">
-          <form *ngIf="!loading" [formGroup]="commandeForm">
+          <!-- Debug amélioré -->
+          
+
+         
+
+          <!-- Formulaire original -->
+          <form *ngIf="!loading && commande" [formGroup]="commandeForm">
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
@@ -34,50 +40,87 @@
               </div>
             </div>
 
+            <!-- Tableau complet avec fonctionnalités -->
             <div class="row">
               <div class="col-12">
-                <h5 class="mt-4">Produits de la Commande</h5>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
+                <h5 class="mt-4">Tableau Complet avec Actions</h5>
+                
+                <div class="table-responsive" *ngIf="commande.items && commande.items.length > 0">
+                  <table class="table table-striped">
+                    <thead class="table-dark">
                       <tr>
                         <th>Produit</th>
                         <th>Quantité</th>
                         <th>Prix Unitaire</th>
+                        <th>Remise (%)</th>
                         <th>Total</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let item of commande?.items">
-                        <td>{{ item.product_name }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.price }}</td>
-                        <td>{{ item.total_ligne }}</td>
+                      <tr *ngFor="let item of commande.items; trackBy: trackByItemId">
+                        <td>
+                          <strong>{{ item.product_name }}</strong>
+                          <br>
+                          <small class="text-muted">ID: {{ item.item_id }}</small>
+                        </td>
+                        <td>
+                          <input type="number" class="form-control" 
+                            [value]="item.quantity" 
+                            (change)="updateItemQuantity(item, +$event.target.value)"
+                            min="1"
+                            style="width: 80px;">
+                        </td>
+                        <td>{{ item.price}}</td>
+                        <td>{{ item.remise }}%</td>
+                        <td>{{ item.total_ligne  }}</td>
+                        <td>
+                          <button class="btn btn-danger btn-sm" 
+                                  (click)="removeItem(item)"
+                                  title="Supprimer">
+                            🗑️
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
+                    <tfoot>
+                      <tr class="table-secondary">
+                        <td colspan="4" class="text-end fw-bold">Total:</td>
+                        <td class="fw-bold">{{ commande.items_total  }}</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
             </div>
 
+            <!-- Boutons -->
             <div class="row mt-4">
               <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between">
                   <button class="btn btn-secondary" routerLink="/commande">
-                    <i class="fas fa-arrow-left me-2"></i> Retour
+                    ⬅️ Retour
                   </button>
                   <button class="btn btn-primary" (click)="updateCommande()" [disabled]="!commandeForm.valid">
-                    <i class="fas fa-save me-2"></i> Sauvegarder
+                    💾 Sauvegarder
                   </button>
                 </div>
               </div>
             </div>
           </form>
 
+          <!-- Loading -->
           <div class="text-center" *ngIf="loading">
             <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">Chargement...</span>
             </div>
+            <p class="mt-2">Chargement des données...</p>
+          </div>
+
+          <!-- Error -->
+          <div class="alert alert-danger" *ngIf="error">
+            ❌ {{ error }}
           </div>
         </div>
       </div>
