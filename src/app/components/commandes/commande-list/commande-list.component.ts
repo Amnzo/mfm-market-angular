@@ -253,20 +253,19 @@ validerPaiement(): void {
 
 
 annulerCommande(commande: any): void {
-  const url = `/admin/cancel-order/${commande.id}`;
+  const url = `${environment.apiUrl}/admin/cancel-order/${commande.id}`;
   
   this.http.put(url, {}).subscribe({
     next: (response) => {
       console.log('Commande annulée avec succès:', response);
-      // Rafraîchir la liste des commandes pour voir le nouveau statut
-      this.loadCommandes();
+      this.loadCommandes(); // Rafraîchir la liste des commandes
     },
     error: (error) => {
       console.error('Erreur lors de l\'annulation de la commande:', error);
-      // Afficher un message d'erreur à l'utilisateur si besoin
     }
   });
 }
+
 
 
 

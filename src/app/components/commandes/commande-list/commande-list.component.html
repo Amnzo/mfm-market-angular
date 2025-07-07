@@ -1,191 +1,159 @@
 <style>
   .btn-details {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-}
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+  }
 
-.btn-details i {
-  font-size: 1.2rem;
-}
+  .btn-details:hover {
+    color: #ffc107;
+  }
 
-  /* Carte */
-.card {
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
-  transition: transform 0.2s ease-in-out;
-}
+  /* Adresse tronquée (clicable) */
+  .adresse-tronquee {
+    cursor: pointer;
+    color: #0d6efd;
+    text-decoration: underline;
+    user-select: none;
+  }
 
-.card:hover {
-  transform: translateY(-5px);
-}
+  /* Texte pour crédit en rouge si > 0 */
+  .credit-attention {
+    color: #dc3545;
+    font-weight: 700;
+  }
 
-/* Statut de la commande */
-.card-status {
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  font-size: 0.85rem;
-  color: #fff;
-}
+  /* Icones créateur et livreur */
+  .info-creator i,
+  .info-delivery i {
+    margin-right: 0.4rem;
+    color: #6c757d;
+  }
 
-/* Couleurs selon le statut */
-.status-en-attente { background-color: #8c888b; }  /* jaune */
-.status-en-cours { background-color: #f00dd2; }   /* bleu clair */
-.status-livrée { background-color: #198754; }     /* vert */
-.status-annulée { background-color: #dc3545; }    /* rouge */
+  /* Blocs de détails */
+  .info-block,
+  .products-block,
+  .payments-block {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
 
+  .products-block ul,
+  .payments-block ul {
+    margin-bottom: 0;
+  }
 
-/* Bouton détails */
-.btn-details {
-  background-color: transparent;
-  border: none;
-  color: white;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: color 0.2s ease-in-out;
-}
+  .payments-block li {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
 
-.btn-details:hover {
-  color: #ffc107;
-}
+  .modal-content {
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
 
-/* Adresse tronquée (clicable) */
-.adresse-tronquee {
-  cursor: pointer;
-  color: #0d6efd;
-  text-decoration: underline;
-  user-select: none;
-}
+  .modal-header {
+    background-color: #0d6efd;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 1rem 1rem 0 0 !important;
+  }
 
-/* Texte pour crédit en rouge si > 0 */
-.credit-attention {
-  color: #dc3545;
-  font-weight: 700;
-}
+  .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-/* Icones créateur et livreur */
-.info-creator i,
-.info-delivery i {
-  margin-right: 0.4rem;
-  color: #6c757d;
-}
+  .modal-body {
+    padding: 2rem;
+  }
 
-/* Blocs de détails */
-.info-block,
-.products-block,
-.payments-block {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
+  .table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+  }
 
-.products-block ul,
-.payments-block ul {
-  margin-bottom: 0;
-}
+  .table td {
+    vertical-align: middle;
+  }
 
-.payments-block li {
-  font-size: 0.9rem;
-  color: #6c757d;
-}
+  /* Paiements styles */
+  .paiements-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
 
-.modal-content {
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
+  .paiement-date {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
 
-.modal-header {
-  background-color: #0d6efd;
-  color: white;
-  padding: 1.5rem;
-  border-radius: 1rem 1rem 0 0 !important;
-}
+  .paiement-amount {
+    font-weight: 600;
+    color: #212529;
+  }
 
-.modal-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+  .paiement-method {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
 
-.modal-body {
-  padding: 2rem;
-}
+  /* Statut styles */
+  .card-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-block;
+    color: #fff;
+    font-size: 0.9rem;
+    min-width: 120px;
+    text-align: center;
+  }
 
-.table thead th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
-}
-
-.table td {
-  vertical-align: middle;
-}
-
-/* Paiements styles */
-.paiements-section {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.paiement-date {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.paiement-amount {
-  font-weight: 600;
-  color: #212529;
-}
-
-.paiement-method {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-/* Statut styles */
-.card-status {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
-  display: inline-block;
-  color: #fff;
-  font-size: 0.9rem;
-  min-width: 120px;
-  text-align: center;
-}
-
-.status-livrée {
-  background-color: #198754;
+  .status-en-attente {
+  background-color: #6c757d; /* gris neutre */
   color: white;
 }
 
-.status-en-cours {
-  background-color: #ffc107;
-  color: #000;
-}
+  .status-en-cours { background-color: #ffc107; color: #000; }
+  .status-livrée { background-color: #198754; color: white; }
+  .status-annulée { background-color: #dc3545; color: white; }
 
-.status-annulée {
-  background-color: #dc3545;
-  color: white;
-}
+  /* Footer styles */
+  .modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+  }
 
-/* Footer styles */
-.modal-footer {
-  padding: 1rem;
-  border-top: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-}
+  .btn-close-white {
+    filter: brightness(0) invert(1);
+  }
 
-.btn-close-white {
-  filter: brightness(0) invert(1);
-}
+  .disabled-card {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
 
+  .disabled-card .btn {
+    pointer-events: auto !important;
+    cursor: not-allowed !important;
+  }
+
+  .btn-details i {
+    font-size: 1.2rem;
+  }
 </style>
 <div class="container">
   <app-menu></app-menu>
@@ -229,161 +197,173 @@
   </div>
   
   <!-- Liste commandes -->
-
-
-
-<!-- Liste commandes -->
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-  <div class="col" *ngFor="let commande of filteredCommandes">
-    <div class="card h-100 border-primary shadow-sm">
-      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Commande #{{ commande.id }}</h5>
-        <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-light btn-sm" (click)="editCommande(commande)">
-            <i class="fas fa-edit"></i>
-          </button>
-          <span
-            class="card-status"
-            [ngClass]="'status-' + commande.status.replace(' ', '-')"
-          >
-            {{ commande.status }}
-          </span>
-
-          <button 
-            *ngIf="commande.credit_sur_commande > 0" 
-            type="button" 
-            class="btn btn-link text-warning p-0 m-0"
-            (click)="ouvrirModalReglement(commande)"
-            title="Règler le crédit"
-            data-bs-toggle="modal" 
-            data-bs-target="#reglementCreditModal"
-          >
-            <i class="fas fa-exclamation-triangle"></i>
-          </button>
-
-
-          <button 
-            type="button" 
-            class="btn-details" 
-            data-bs-toggle="modal" 
-            data-bs-target="#detailsModal"
-            (click)="selectedCommande = commande; loadCommandesCredit(commande.client_id)"
-            title="Voir détails"
-          >
-            <i class="fas fa-eye"></i>
-          </button>
-
-          <button 
-            *ngIf="!commande.delivery_name && commande.status.toLowerCase() !== 'annulée'"
-            type="button" 
-            class="btn-details" 
-            data-bs-toggle="modal" 
-            data-bs-target="#assignDeliveryModal"
-            (click)="selectedCommande = commande"
-            title="Attribuer un livreur"
-          >
-            <i class="fas fa-truck"></i>
-          </button>
-
-          <button 
-            type="button"
-            class="btn-details"
-            (click)="imprimerCommande(commande)"
-            title="Imprimer la commande"
-          >
-            <i class="fas fa-print"></i>
-          </button>
-
-                  <!-- 🆕 Bouton Annuler avec modale -->
-          
-          <button *ngIf="commande.status.toLowerCase()=== 'en cours' || commande.status.toLowerCase() === 'en attente'"
-          type="button"
-          class="btn-details text-danger"
-          data-bs-toggle="modal"
-          [attr.data-bs-target]="'#annulerModal' + commande.id"
-          title="Annuler la commande">
-          <i class="fas fa-times-circle"></i>
-          </button>
-
-        </div>
-      </div>
-
-      <div class="card-body">
-        <p><strong>Client :</strong> {{ commande.client_name }}</p>
-        <p><strong>Téléphone :</strong> {{ commande.client_mobile }}</p>
-        <p>
-          <strong>Adresse :</strong>
-          <span
-            class="adresse-tronquee"
-            data-bs-toggle="modal"
-            data-bs-target="#adresseModal"
-            (click)="adresseComplete = commande.client_adresse"
-            title="Cliquer pour voir l'adresse complète"
-          >
-            {{ commande.client_adresse.length > 40 ? (commande.client_adresse | slice:0:40) + '...' : commande.client_adresse }}
-          </span>
-        </p>
-        <p><strong>Date :</strong> {{ commande.created_at | date:'mediumDate' }}</p>
-        <p><strong>Total :</strong> {{ commande.total }} DH</p>
-
-        <p *ngIf="commande.creator_name" class="info-creator">
-          <i class="fas fa-user"></i> Créé par : {{ commande.creator_name }}
-        </p>
-        <p *ngIf="commande.status.toLowerCase() === 'livrée' && commande.delivery_name" class="info-delivery">
-          <i class="fas fa-truck"></i> Livré par : {{ commande.delivery_name }}
-        </p>
-      </div>
-    </div>
-
-    <!-- 🆕 Modale de confirmation pour annuler la commande -->
-    <div
-      class="modal fade"
-      [id]="'annulerModal' + commande.id"
-      tabindex="-1"
-      aria-labelledby="annulerModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-danger text-white">
-            <h5 class="modal-title" id="annulerModalLabel">Confirmer l'annulation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-          </div>
-          <div class="modal-body">
-            Voulez-vous vraiment annuler la commande <strong>#{{ commande.id }}</strong> ?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              (click)="annulerCommande(commande); closeModal('annulerModal' + commande.id)"
-            >
-              Oui, annuler
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="col" *ngFor="let commande of filteredCommandes">
+      <div class="card h-100 border-primary shadow-sm" [class.disabled-card]="commande.status.toLowerCase() === 'annulée'">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0"> #{{ commande.id }}</h5>
+          <div class="d-flex align-items-center gap-2">
+            <button *ngIf="commande.status.toLowerCase() !== 'livrée'" 
+            class="btn btn-primary btn-sm" 
+            (click)="editCommande(commande)" 
+            [disabled]="commande.status.toLowerCase() === 'annulée'"
+            style="padding: 0.25rem 0.75rem;">
+              <i class="fas fa-edit me-1"></i>
+              Modifier
             </button>
+  
+            <span
+              class="card-status"
+              [ngClass]="'status-' + commande.status.replace(' ', '-')"
+            >
+              {{ commande.status }}
+            </span>
+
+            <button 
+              *ngIf="commande.credit_sur_commande > 0" 
+              type="button" 
+              class="btn btn-link text-warning p-0 m-0"
+              (click)="ouvrirModalReglement(commande)"
+              title="Règler le crédit"
+              data-bs-toggle="modal" 
+              data-bs-target="#reglementCreditModal"
+            >
+              <i class="fas fa-exclamation-triangle"></i>
+            </button>
+
+
+            <button 
+              type="button" 
+              class="btn-details" 
+              data-bs-toggle="modal" 
+              data-bs-target="#detailsModal"
+              (click)="selectedCommande = commande; loadCommandesCredit(commande.client_id)"
+              title="Voir détails"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+
+            <button 
+              *ngIf="!commande.delivery_name && commande.status.toLowerCase() !== 'annulée'"
+              type="button" 
+              class="btn-details" 
+              data-bs-toggle="modal" 
+              data-bs-target="#assignDeliveryModal"
+              (click)="selectedCommande = commande"
+              title="Attribuer un livreur"
+            >
+              <i class="fas fa-truck"></i>
+            </button>
+
+            <button 
+              type="button"
+              class="btn-details"
+              (click)="imprimerCommande(commande)"
+              title="Imprimer la commande"
+            >
+              <i class="fas fa-print"></i>
+            </button>
+
+            <!-- Bouton Annuler avec modale -->
+            
+            <button *ngIf="commande.status.toLowerCase()=== 'en cours' || commande.status.toLowerCase() === 'en attente'"
+            type="button"
+            class="btn-details text-danger"
+            data-bs-toggle="modal"
+            [attr.data-bs-target]="'#annulerModal' + commande.id"
+            title="Annuler la commande">
+            <i class="fas fa-times-circle"></i>
+            </button>
+
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p><strong>Client :</strong> {{ commande.client_name }}</p>
+          <p><strong>Téléphone :</strong> {{ commande.client_mobile }}</p>
+          <p>
+            <strong>Adresse :</strong>
+            <span
+              class="adresse-tronquee"
+              data-bs-toggle="modal"
+              data-bs-target="#adresseModal"
+              (click)="adresseComplete = commande.client_adresse"
+              title="Cliquer pour voir l'adresse complète"
+            >
+              {{ commande.client_adresse.length > 40 ? (commande.client_adresse | slice:0:40) + '...' : commande.client_adresse }}
+            </span>
+          </p>
+          <p><strong>Date :</strong> {{ commande.created_at | date:'mediumDate' }}</p>
+          <p><strong>Total :</strong> {{ commande.total }} DH</p>
+
+          <p *ngIf="commande.creator_name" class="info-creator">
+            <i class="fas fa-user"></i> Créé par : {{ commande.creator_name }}
+          </p>
+          <p *ngIf="commande.status.toLowerCase() === 'livrée' && commande.delivery_name" class="info-delivery">
+            <i class="fas fa-truck"></i> Livré par : {{ commande.delivery_name }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Modale de confirmation pour annuler la commande -->
+      <div
+        class="modal fade"
+        [id]="'annulerModal' + commande.id"
+        tabindex="-1"
+        aria-labelledby="annulerModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+              <h5 class="modal-title" id="annulerModalLabel">Confirmer l'annulation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+              Voulez-vous vraiment annuler la commande <strong>#{{ commande.id }}</strong> ?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="annulerCommande(commande); closeModal('annulerModal' + commande.id)"
+              >
+                Oui, annuler
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
-
   </div>
-</div>
-
 
   <!-- Modals -->
-  <!-- Modals -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white rounded-top">
-        <h5 class="modal-title" id="detailsModalLabel">
-          <i class="fas fa-info-circle me-2"></i>تفاصيل الطلب #{{ selectedCommande?.id }}
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row mb-4">
-          <div class="col-md-6">
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white rounded-top">
+          <h5 class="modal-title" id="detailsModalLabel">
+            <i class="fas fa-info-circle me-2"></i>تفاصيل الطلب #{{ selectedCommande?.id }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <p><strong><i class="fas fa-user me-1"></i>العميل :</strong> {{ selectedCommande?.client_name }}</p>
+              <p><strong><i class="fas fa-phone me-1"></i>الهاتف :</strong> {{ selectedCommande?.client_mobile }}</p>
+              <p><strong><i class="fas fa-map-marker-alt me-1"></i>العنوان :</strong> {{ selectedCommande?.client_adresse }}</p>
+              <p><strong><i class="fas fa-calendar-alt me-1"></i>التاريخ :</strong> {{ selectedCommande?.created_at | date:'medium' }}</p>
+              <p><strong><i class="fas fa-coins me-1"></i>المجموع :</strong> {{ selectedCommande?.total | number:'1.2-2' }} </p>
+              <div *ngIf="selectedCommande?.credit_sur_commande" class="alert alert-warning p-2 mb-3">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  <div>
+                    <strong>الدين المتبقي :</strong> 
+                    <span class="credit-attention">{{ selectedCommande?.credit_sur_commande | number:'1.2-2' }} DH</span>
+                  </div>
             <p><strong><i class="fas fa-user me-1"></i>العميل :</strong> {{ selectedCommande?.client_name }}</p>
             <p><strong><i class="fas fa-phone me-1"></i>الهاتف :</strong> {{ selectedCommande?.client_mobile }}</p>
             <p><strong><i class="fas fa-map-marker-alt me-1"></i>العنوان :</strong> {{ selectedCommande?.client_adresse }}</p>
