@@ -9,12 +9,7 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body">
-          <!-- Debug amélioré -->
-          
-
-         
-
-          <!-- Formulaire original -->
+          <!-- Formulaire principal -->
           <form *ngIf="!loading && commande" [formGroup]="commandeForm">
             <div class="row">
               <div class="col-md-6">
@@ -40,10 +35,10 @@
               </div>
             </div>
 
-            <!-- Tableau complet avec fonctionnalités -->
+            <!-- Tableau des articles -->
             <div class="row">
               <div class="col-12">
-                <h5 class="mt-4">Tableau Complet avec Actions</h5>
+                <h5 class="mt-4">Articles de la commande</h5>
                 
                 <div class="table-responsive" *ngIf="commande.items && commande.items.length > 0">
                   <table class="table table-striped">
@@ -58,7 +53,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let item of commande.items; trackBy: trackByItemId">
+                      <tr *ngFor="let item of commande.items; trackBy: trackByItemId" [attr.data-item-id]="item.item_id">
                         <td>
                           <strong>{{ item.product_name }}</strong>
                           <br>
@@ -71,16 +66,23 @@
                             min="1"
                             style="width: 80px;">
                         </td>
-                        <td>{{ item.price}}</td>
+                        <td>
+                          <input type="number" class="form-control" 
+                            [value]="item.price" 
+                            (change)="updateItemPrice(item, +$event.target.value)"
+                            min="0"
+                            step="0.01"
+                            style="width: 80px;">
+                        </td>
                         <td>
                           <input type="number" class="form-control" 
                             [value]="item.remise" 
                             (change)="updateItemRemise(item, +$event.target.value)"
                             min="0"
+                            step="0.01"
                             style="width: 80px;">
                         </td>
                         <td>{{ item.total_ligne | number:'1.2-2' }}</td>
-
                         <td>
                           <button class="btn btn-danger btn-sm" 
                                   (click)="removeItem(item)"
@@ -93,30 +95,198 @@
                     <tfoot>
                       <tr class="table-secondary">
                         <td colspan="4" class="text-end fw-bold">Total:</td>
-                        <td class="fw-bold">{{ commande.items_total  }}</td>
+                        <td class="fw-bold">{{ commande.items_total | number:'1.2-2' }} DH</td>
                         <td></td>
                       </tr>
                     </tfoot>
                   </table>
                 </div>
+
+                <!-- Message si aucun article -->
+                <div *ngIf="!commande.items || commande.items.length === 0" class="alert alert-info">
+                  <i class="fas fa-info-circle me-2"></i>
+                  Aucun article dans cette commande. Utilisez le bouton "Ajouter ligne" pour ajouter des articles.
+                </div>
               </div>
             </div>
 
-            <!-- Boutons -->
+            <!-- Bouton Ajouter ligne -->
+            <div class="row mt-4">
+              <div class="col-12 text-end">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                  <i class="fas fa-plus me-2"></i>Ajouter ligne
+                </button>
+              </div>
+            </div>
+
+            <!-- Boutons de navigation -->
             <div class="row mt-4">
               <div class="col-12">
                 <div class="d-flex justify-content-between">
-                 
                   <button class="btn btn-secondary" routerLink="/commande">
                     ⬅️ Retour
                   </button>
-                  <button class="btn btn-primary" (click)="saveCommande()" [disabled]="!commandeForm.valid">
-                    💾 Sauvegarder..
+                  <button class="btn btn-success" (click)="saveCommande()" [disabled]="!commandeForm.valid">
+                    💾 Sauvegarder
                   </button>
                 </div>
               </div>
             </div>
           </form>
+
+          <!-- Modal Ajouter Article -->
+          <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                  <h5 class="modal-title" id="addItemModalLabel">
+                    <i class="fas fa-box me-2"></i>Ajouter un Article
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                  <form [formGroup]="addItemForm">
+                    <!-- Sélection du produit -->
+                    <div class="row mb-3">
+                      <div class="col-12">
+                        <label for="productSelect" class="form-label">
+                          <i class="fas fa-shopping-cart me-2"></i>Sélectionnez un produit
+                        </label>
+                        <select class="form-select form-select-lg" id="productSelect" 
+                                formControlName="product_id" 
+                                (change)="onProductChange($event)">
+                          <option value="">-- Choisissez un produit --</option>
+                          <option *ngFor="let product of products" [value]="product.id">
+                            {{ product.name }} - {{ product.price | number:'1.2-2' }} DH
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Informations du produit sélectionné -->
+                    <div class="row mb-4" *ngIf="selectedProduct">
+                      <div class="col-12">
+                        <div class="card bg-light">
+                          <div class="card-header">
+                            <h6 class="mb-0">
+                              <i class="fas fa-info-circle me-2"></i>
+                              Informations du produit : {{ selectedProduct.name }}
+                            </h6>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col-md-3">
+                                <strong>Prix:</strong><br>
+                                <span class="text-success">{{ selectedProduct.price | number:'1.2-2' }} DH</span>
+                              </div>
+                              <div class="col-md-3">
+                                <strong>Stock disponible:</strong><br>
+                                <span class="text-info">{{ selectedProduct.qtt_stock }} unités</span>
+                              </div>
+                              <div class="col-md-3">
+                                <strong>Prix 2:</strong><br>
+                                <span class="text-secondary">{{ selectedProduct.price2 | number:'1.2-2' }} DH</span>
+                              </div>
+                              <div class="col-md-3">
+                                <strong>Disponible:</strong><br>
+                                <span [class]="selectedProduct.avalaible ? 'text-success' : 'text-danger'">
+                                  {{ selectedProduct.avalaible ? 'Oui' : 'Non' }}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Formulaire de saisie -->
+                    <div class="row" *ngIf="selectedProduct">
+                      <div class="col-md-4">
+                        <div class="mb-3">
+                          <label for="newQuantity" class="form-label">
+                            <i class="fas fa-hashtag me-2"></i>Quantité
+                          </label>
+                          <input type="number" class="form-control" id="newQuantity" 
+                                 formControlName="quantity" 
+                                 min="1" 
+                                 [max]="selectedProduct.qtt_stock"
+                                 required>
+                          <div class="form-text">
+                            Maximum: {{ selectedProduct.qtt_stock }} unités
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="mb-3">
+                          <label for="newPrice" class="form-label">
+                            <i class="fas fa-euro-sign me-2"></i>Prix Unitaire (DH)
+                          </label>
+                          <input type="number" class="form-control" id="newPrice" 
+                                 formControlName="price" 
+                                 min="0" 
+                                 step="0.01" 
+                                 required>
+                          <div class="form-text">
+                            Prix suggéré: {{ selectedProduct.price | number:'1.2-2' }} DH
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="mb-3">
+                          <label for="newRemise" class="form-label">
+                            <i class="fas fa-percent me-2"></i>Remise (DH)
+                          </label>
+                          <input type="number" class="form-control" id="newRemise" 
+                                 formControlName="remise" 
+                                 min="0" 
+                                 step="0.01">
+                          <div class="form-text">
+                            Remise en dirhams
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Prévisualisation du total -->
+                    <div class="row" *ngIf="selectedProduct && addItemForm.valid">
+                      <div class="col-12">
+                        <div class="alert alert-success">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                              <i class="fas fa-calculator me-2"></i>
+                              <strong>Total prévisualisé:</strong>
+                            </span>
+                            <span class="fs-5 fw-bold">
+                              {{ getPreviewTotal() | number:'1.2-2' }} DH
+                            </span>
+                          </div>
+                          <small class="text-muted">
+                            Calcul: {{ addItemForm.get('price')?.value }} × {{ addItemForm.get('quantity')?.value }} - {{ addItemForm.get('remise')?.value }} = {{ getPreviewTotal() | number:'1.2-2' }} DH
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Validation des erreurs -->
+                    <div class="alert alert-warning" *ngIf="selectedProduct && addItemForm.get('quantity')?.value > selectedProduct.qtt_stock">
+                      <i class="fas fa-exclamation-triangle me-2"></i>
+                      La quantité demandée ({{ addItemForm.get('quantity')?.value }}) dépasse le stock disponible ({{ selectedProduct.qtt_stock }}).
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Annuler
+                  </button>
+                  <button type="button" class="btn btn-primary" 
+                          [disabled]="!addItemForm.valid || !selectedProduct || (addItemForm.get('quantity')?.value > selectedProduct.qtt_stock)"
+                          (click)="addNewItem()">
+                    <i class="fas fa-check me-2"></i>Ajouter l'article
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- Loading -->
           <div class="text-center" *ngIf="loading">
@@ -128,7 +298,7 @@
 
           <!-- Error -->
           <div class="alert alert-danger" *ngIf="error">
-            ❌ {{ error }}
+            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
           </div>
         </div>
       </div>

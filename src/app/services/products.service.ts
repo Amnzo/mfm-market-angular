@@ -19,9 +19,9 @@ export interface Product {
   providedIn: 'root'
 })
 export class ProductsService {
-  private apiUrl = `${environment.apiUrl}/admin/products`;
-  private addProductUrl = `${environment.apiUrl}/admin/add-product`;
-  private getproducturl = `${environment.apiUrl}/admin/get_product`;
+  private apiUrl = 'https://railwayaapi-production.up.railway.app/admin/products';
+  private addProductUrl = 'https://railwayaapi-production.up.railway.app/admin/add-product';
+  private getproducturl = 'https://railwayaapi-production.up.railway.app/admin/get_product';
 
   constructor(private http: HttpClient) {}
 
@@ -38,25 +38,27 @@ export class ProductsService {
 
   getProducts(): Observable<Product[]> {
     const headers = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Content-Type': 'application/json'
     };
 
     return this.http.get<Product[]>(this.apiUrl, { headers }).pipe(
       map((products) => {
-        // Transform the data to match our interface
+        if (!Array.isArray(products)) {
+          console.error('Les données reçues ne sont pas un tableau:', products);
+          return [];
+        }
         return products.map(product => ({
-          ...product,
-          price: product.price,
-          price2: product.price2,
-          avalaible: product.avalaible,
-          qtt_stock: product.qtt_stock
+          id: product.id || 0,
+          name: product.name || '',
+          price: typeof product.price === 'number' ? product.price : 0,
+          price2: typeof product.price2 === 'number' ? product.price2 : 0,
+          avalaible: typeof product.avalaible === 'boolean' ? product.avalaible : false,
+          qtt_stock: typeof product.qtt_stock === 'number' ? product.qtt_stock : 0,
+          imageurl: product.imageurl || ''
         }));
       }),
       catchError((error) => {
         console.error('API Error:', error);
-        // Try to get more detailed error information
         const errorMessage = error.error?.message || 
                            error.statusText || 
                            'Erreur lors du chargement des produits';

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
+import { ProductsService, Product } from '../../../services/products.service';
 
 interface CommandeItem {
   item_id: number;
@@ -46,26 +47,38 @@ interface Commande {
 export class CommandeEditComponent implements OnInit {
   commande: Commande | null = null;
   commandeForm: FormGroup;
+  addItemForm: FormGroup;
   loading = true;
   error: string = '';
-  newProduct: string = '';
-  newQuantity: number = 1;
-  newPrice: number = 0;
-  newRemise: number = 0;
+  products: Product[] = [];
+  loadingProducts = false;
+  selectedProduct: Product | null = null; // Produit sélectionné
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private productsService: ProductsService
   ) {
+    // Initialiser les formulaires avec des valeurs par défaut
     this.commandeForm = this.fb.group({
       client_name: ['', Validators.required],
       client_mobile: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       client_adresse: ['', Validators.required]
     });
+    
+    this.addItemForm = this.fb.group({
+      product_id: ['', Validators.required],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      price: [0, [Validators.required, Validators.min(0)]],
+      remise: [0, Validators.min(0)]
+    });
   }
 
   ngOnInit(): void {
+    // Charger les produits au démarrage
+    this.loadProducts();
+
     // Get the commande data from history state
     const state = window.history.state;
     console.log('History state:', state);
@@ -123,7 +136,6 @@ export class CommandeEditComponent implements OnInit {
     }
   }
 
-  // AJOUTER CETTE MÉTHODE MANQUANTE
   trackByItemId(index: number, item: CommandeItem): number {
     return item.item_id;
   }
@@ -151,42 +163,121 @@ export class CommandeEditComponent implements OnInit {
     return (prix * quantite) - remiseValue;
   }
 
-  // Reset new item form
-  private resetNewItemForm(): void {
-    this.newProduct = '';
-    this.newQuantity = 1;
-    this.newPrice = 0;
-    this.newRemise = 0;
+  loadProducts(): void {
+    this.loadingProducts = true;
+    this.productsService.getProducts().subscribe({
+      next: (products) => {
+        console.log('Produits reçus de l\'API:', products);
+        if (products && Array.isArray(products)) {
+          this.products = products;
+          console.log('Nombre de produits chargés:', this.products.length);
+        } else {
+          console.error('Les données produits ne sont pas valides:', products);
+          this.products = [];
+        }
+        this.loadingProducts = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des produits:', error);
+        this.loadingProducts = false;
+      }
+    });
+  }
+
+  onProductChange(event: any): void {
+    const selectedProductId = parseInt(event.target.value);
+    console.log('Produit sélectionné ID:', selectedProductId);
+    
+    if (selectedProductId) {
+      this.selectedProduct = this.products.find(p => p.id === selectedProductId) || null;
+      console.log('Produit sélectionné:', this.selectedProduct);
+      
+      if (this.selectedProduct) {
+        // Mettre à jour le formulaire avec les valeurs du produit
+        this.addItemForm.patchValue({
+          product_id: selectedProductId,
+          price: this.selectedProduct.price || 0,
+          quantity: 1,
+          remise: 0
+        });
+      }
+    } else {
+      this.selectedProduct = null;
+      // Réinitialiser le formulaire
+      this.addItemForm.patchValue({
+        product_id: '',
+        price: 0,
+        quantity: 1,
+        remise: 0
+      });
+    }
   }
 
   addNewItem(): void {
-    if (!this.commande) return;
-    
-    // Initialiser le tableau items s'il n'existe pas
-    if (!this.commande.items) {
-      this.commande.items = [];
-    }
-    
-    if (!this.newProduct || this.newQuantity <= 0 || this.newPrice <= 0) {
-      alert('Veuillez remplir tous les champs correctement');
+    if (!this.addItemForm.valid || !this.selectedProduct) {
+      console.log('Formulaire invalide ou produit non sélectionné');
       return;
     }
 
-    const newId = Math.max(0, ...this.commande.items.map(i => i.item_id)) + 1;
+    const formValue = this.addItemForm.value;
+    
+    // Vérifier le stock disponible
+    if (this.selectedProduct.qtt_stock < formValue.quantity) {
+      alert(`Stock insuffisant! Stock disponible: ${this.selectedProduct.qtt_stock}`);
+      return;
+    }
+
     const newItem: CommandeItem = {
-      item_id: newId,
-      product_id: 0, // Will be set by backend
-      quantity: this.newQuantity.toString(),
-      price: this.newPrice.toString(),
-      remise: this.newRemise.toString(),
-      total_ligne: this.calculateItemTotal(this.newPrice.toString(), this.newQuantity.toString(), this.newRemise.toString()).toString(),
-      product_name: this.newProduct,
+      item_id: Date.now(), // Générer un ID temporaire
+      quantity: formValue.quantity,
+      price: formValue.price,
+      remise: formValue.remise,
+      total_ligne: this.calculateItemTotal(formValue.price, formValue.quantity, formValue.remise),
+      product_id: this.selectedProduct.id,
+      product_name: this.selectedProduct.name,
       is_new: true
     };
 
-    this.commande.items.push(newItem);
-    this.calculateTotal();
-    this.resetNewItemForm();
+    console.log('Nouvel item à ajouter:', newItem);
+
+    if (this.commande) {
+      this.commande.items = [...this.commande.items, newItem];
+      this.calculateTotal();
+      console.log('Items après ajout:', this.commande.items);
+    }
+
+    // Réinitialiser le formulaire et fermer le modal
+    this.resetAddItemForm();
+    this.closeModal();
+  }
+
+  private resetAddItemForm(): void {
+    this.selectedProduct = null;
+    this.addItemForm.reset({
+      product_id: '',
+      quantity: 1,
+      price: 0,
+      remise: 0
+    });
+  }
+
+  private closeModal(): void {
+    // Fermer le modal Bootstrap
+    const modalElement = document.getElementById('addItemModal');
+    if (modalElement) {
+      const modal = (window as any).bootstrap.Modal.getInstance(modalElement);
+      if (modal) {
+        modal.hide();
+      }
+    }
+  }
+
+  // Calculer le total prévisualisation dans le modal
+  getPreviewTotal(): number {
+    if (!this.addItemForm.valid) return 0;
+    
+    const formValue = this.addItemForm.value;
+    return this.calculateItemTotal(formValue.price, formValue.quantity, formValue.remise);
   }
 
   // Remove item
@@ -227,31 +318,68 @@ export class CommandeEditComponent implements OnInit {
       .subscribe({
         next: (response) => {
           console.log('Commande mise à jour avec succès:', response);
+          alert('Commande sauvegardée avec succès!');
           // Redirection ou autre action
         },
         error: (error) => {
           console.error('Erreur:', error);
-          // Gestion de l'erreur
+          alert('Erreur lors de la sauvegarde');
         }
       });
   }
 
   // Update item quantity
   updateItemQuantity(item: CommandeItem, newQuantity: number): void {
-    if (!this.commande) return;
+    if (!this.commande?.items) return;
     
-    item.quantity = newQuantity.toString();
-    item.total_ligne = this.calculateItemTotal(item.price, item.quantity, item.remise).toString();
-    this.calculateTotal();
+    const product = this.products.find(p => p.id === item.product_id);
+    if (product && product.qtt_stock < newQuantity) {
+      alert('La quantité demandée dépasse le stock disponible');
+      return;
+    }
+
+    const index = this.commande.items.findIndex(i => i.item_id === item.item_id);
+    if (index !== -1) {
+      this.commande.items[index].quantity = newQuantity;
+      this.commande.items[index].total_ligne = this.calculateItemTotal(
+        this.commande.items[index].price,
+        this.commande.items[index].quantity,
+        this.commande.items[index].remise
+      );
+      this.calculateTotal();
+    }
+  }
+
+  // Update item price
+  updateItemPrice(item: CommandeItem, newPrice: number): void {
+    if (!this.commande?.items) return;
+    
+    const index = this.commande.items.findIndex(i => i.item_id === item.item_id);
+    if (index !== -1) {
+      this.commande.items[index].price = newPrice;
+      this.commande.items[index].total_ligne = this.calculateItemTotal(
+        this.commande.items[index].price,
+        this.commande.items[index].quantity,
+        this.commande.items[index].remise
+      );
+      this.calculateTotal();
+    }
   }
 
   // Update item remise
   updateItemRemise(item: CommandeItem, newRemise: number): void {
-    if (!this.commande) return;
+    if (!this.commande?.items) return;
     
-    item.remise = newRemise.toString();
-    item.total_ligne = this.calculateItemTotal(item.price, item.quantity, item.remise).toString();
-    this.calculateTotal();
+    const index = this.commande.items.findIndex(i => i.item_id === item.item_id);
+    if (index !== -1) {
+      this.commande.items[index].remise = newRemise;
+      this.commande.items[index].total_ligne = this.calculateItemTotal(
+        this.commande.items[index].price,
+        this.commande.items[index].quantity,
+        this.commande.items[index].remise
+      );
+      this.calculateTotal();
+    }
   }
 
   loadCommande(id: string): void {
